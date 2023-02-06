@@ -1,12 +1,10 @@
 import pytest
 from src.theory.scales import Scale
-from src.theory.constants import ScaleFormulas, IonianModes, _IonianFormula, Note, Notes
+from src.theory.constants import ScaleFormulas, IonianModes, _IonianFormula, PentatonicModes, Note, Notes
 
 
 def test_scale_constants():
-    assert len(ScaleFormulas) == len(IonianModes)
     assert ScaleFormulas[IonianModes.IONIAN] == _IonianFormula
-
     assert ScaleFormulas[IonianModes.AEOLIAN] == [2, 1, 2, 2, 1, 2, 2]
 
 @pytest.mark.parametrize("root,formula",[
@@ -25,6 +23,15 @@ def test_major_scale(root):
     assert scale.notes == [Note.C, Note.D, Note.E, Note.F, Note.G, Note.A, Note.B, Note.C]
     
 @pytest.mark.parametrize("root", [Note.A])
-def test_major_scale(root):
+def test_minor_scale(root):
     scale = Scale(root=root, formula=ScaleFormulas.get(IonianModes.AEOLIAN), name="A Minor")
     assert scale.notes == [Note.A, Note.B, Note.C, Note.D, Note.E, Note.F, Note.G, Note.A]
+
+
+def test_major_pentatonic():
+    scale = Scale(root=Note.C, formula=ScaleFormulas.get(PentatonicModes.MAJOR), name="C Maj Pent")
+    assert scale.notes == [Note.C, Note.D, Note.E, Note.G, Note.A, Note.C]
+
+def test_minor_pentatonic():
+    scale = Scale(root=Note.A, formula=ScaleFormulas.get(PentatonicModes.MINOR), name="A Min Pent")
+    assert scale.notes == [Note.A, Note.C, Note.D, Note.E, Note.G, Note.A]

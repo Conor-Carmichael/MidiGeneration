@@ -5,6 +5,7 @@ from src.utils.utils import cycle_n_times
 class StepType(IntEnum):
     HALF = 1
     WHOLE = 2
+    WHOLEHALF = 3
 
 
 # Notes = Graph
@@ -25,6 +26,7 @@ IonianModes = Enum(
     "Modes",
     ["IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN"],
 )
+PentatonicModes = Enum("PentatonicModes", ["MAJOR", "SECOND", "THIRD", "FOURTH", "MINOR"])
 
 _WholeToneFomula = [
     StepType.WHOLE,
@@ -33,6 +35,14 @@ _WholeToneFomula = [
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.WHOLE,
+]
+_PentatonicFormula = [
+    StepType.WHOLE,
+    StepType.WHOLE,
+    StepType.WHOLEHALF,
+    StepType.WHOLE,
+    StepType.WHOLEHALF
+
 ]
 _IonianFormula = [
     StepType.WHOLE,
@@ -43,8 +53,18 @@ _IonianFormula = [
     StepType.WHOLE,
     StepType.HALF,
 ]
-ScaleFormulas = {
+
+
+IonianModesFormulas = {
     mode: cycle_n_times(_IonianFormula, idx) for idx, mode in enumerate(IonianModes)
+}
+PentatonicModesFormulas = {
+    mode: cycle_n_times(_PentatonicFormula, idx) for idx, mode in enumerate(PentatonicModes)
+}
+
+ScaleFormulas = {
+    **IonianModesFormulas,
+    **PentatonicModesFormulas
 }
 
 
