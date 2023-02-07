@@ -68,3 +68,10 @@ def test_minor_pentatonic():
         root=Note.A, formula=ScaleFormulas.get(PentatonicModes.MINOR), name="A Min Pent"
     )
     assert scale.notes == [Note.A, Note.C, Note.D, Note.E, Note.G, Note.A]
+
+
+def test_wholetone():
+    scale = Scale(
+        root=Note.C, formula=ScaleFormulas.get(WholeToneModes.WHOLETONE), name="Whole Tone Scale"
+    )
+    assert scale.notes == [Note.C, Note.D, Note.E, Note.Fsharp, Note.Gsharp, Note.Asharp, Note.C]

@@ -4,6 +4,8 @@ from midiutil import MidiFile
 
 
 class NoteSequence(ABC):
+    """General class for sequences of notes (scales, chords, melodies...)"""
+
     def __init__(
         self, root: Note, formula: StepSequence, name: str, octave: int = 4
     ) -> None:
@@ -18,10 +20,14 @@ class NoteSequence(ABC):
 
     @abstractmethod
     def _set_notes(self) -> None:
+        """Specific to subclasses, scales and chords will be different implemenations"""
         ...
 
     def get_notes(self) -> List[Note]:
         return self.notes
+    
+    def get_name(self) -> str:
+        return self.name.title()
 
     def get_midi_value(self, velocity: Any, bpm: int, note_lengths: Any) -> MidiFile:
         """Convert notes to midi values"""

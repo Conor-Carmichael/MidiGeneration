@@ -6,10 +6,9 @@ File for declaration of constants:
 Author: Conor Carmichael
 """
 
-
 from src.utils.utils import cycle_n_times
 from typing import *
-from src.theory.datatypes import StepType, ChordType, IonianModes, PentatonicModes
+from src.theory.datatypes import StepType, ChordType, IonianModes, PentatonicModes, WholeToneModes
 
 midi_note_vals = {}
 midi_start_val = 21
@@ -28,6 +27,11 @@ _WholeToneFomula = [
     StepType.WHOLE,
 ]
 
+WholeToneFormulas = {
+    mode: cycle_n_times(_WholeToneFomula, idx)
+    for idx, mode in enumerate(WholeToneModes)
+}
+
 _PentatonicFormula = [
     StepType.WHOLE,
     StepType.WHOLE,
@@ -35,6 +39,11 @@ _PentatonicFormula = [
     StepType.WHOLE,
     StepType.WHOLEHALF,
 ]
+
+PentatonicModesFormulas = {
+    mode: cycle_n_times(_PentatonicFormula, idx)
+    for idx, mode in enumerate(PentatonicModes)
+}
 
 _IonianFormula = [
     StepType.WHOLE,
@@ -50,12 +59,8 @@ IonianModesFormulas = {
     mode: cycle_n_times(_IonianFormula, idx) for idx, mode in enumerate(IonianModes)
 }
 
-PentatonicModesFormulas = {
-    mode: cycle_n_times(_PentatonicFormula, idx)
-    for idx, mode in enumerate(PentatonicModes)
-}
 
-ScaleFormulas = {**IonianModesFormulas, **PentatonicModesFormulas}
+ScaleFormulas = {**IonianModesFormulas, **PentatonicModesFormulas, **WholeToneFormulas}
 
 
 ChordSymbols = {

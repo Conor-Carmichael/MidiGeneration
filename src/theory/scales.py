@@ -20,5 +20,3 @@ class Scale(NoteSequence):
             next_note = Note[Notes[next_note_idx]]
             self.notes.append(next_note)
             last_note_idx = next_note_idx
-
-

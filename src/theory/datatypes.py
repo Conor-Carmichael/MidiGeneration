@@ -38,7 +38,7 @@ IonianModes = Enum(
 PentatonicModes = Enum(
     "PentatonicModes", ["MAJOR", "SECOND", "THIRD", "FOURTH", "MINOR"]
 )
-
+WholeToneModes = Enum("WholeToneModes", ["WHOLETONE"])
 
 class StepType(IntEnum):
     HALF = 1

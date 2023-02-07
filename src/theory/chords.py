@@ -48,4 +48,6 @@ class Chord(NoteSequence):
         self.notes = notes
 
     def is_diatonic(self, scale: Scale) -> bool:
-        pass
+        """Checks if this chord is diatonic in the given scale"""
+        return all([note in scale.get_notes() for note in self.notes])
+        
