@@ -1,6 +1,4 @@
 from typing import *
 from src.theory.constants import *
-# from src.theory.chords import Chord
-# from src.theory.scales import Scale
-
+from src.theory.datatypes import *
 import midiutil as midi

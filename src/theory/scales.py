@@ -1,12 +1,15 @@
+from abc import ABC
+from src.theory.note_sequence import NoteSequence
 from theory import *
 
 
-class Scale:
-    def __init__(self, root: Note, formula: List[StepType], name: AnyStr) -> None:
-        self.root = root
-        self.formula = formula
-        self.name = name
-        self.scale_notes = []
+class Scale(NoteSequence):
+    def __init__(
+        self, 
+        *args,
+        **kwargs
+    ) -> None:
+        super().__init__(*args, **kwargs)
         self._set_notes()
 
     def _set_notes(self) -> List[Note]:
@@ -18,5 +21,4 @@ class Scale:
             self.notes.append(next_note)
             last_note_idx = next_note_idx
 
-    def get_midi(self) -> List[midi.MIDIFile]:
-        pass
+

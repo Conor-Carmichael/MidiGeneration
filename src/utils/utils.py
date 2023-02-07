@@ -1,7 +1,7 @@
 from typing import *
 
 
-def cycle_n_times(input: List, n) -> List:
+def cycle_n_times(input: List, n: int) -> List:
     while n > 0:
         first = input[0]
         input = input[1:]

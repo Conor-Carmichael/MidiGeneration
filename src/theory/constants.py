@@ -1,32 +1,23 @@
-from enum import Enum, IntEnum
+"""
+File for declaration of constants:
+* Scale and Chord formulas
+* Midi Note ranges
+
+Author: Conor Carmichael
+"""
+
+
 from src.utils.utils import cycle_n_times
+from typing import *
+from src.theory.datatypes import StepType, ChordType, IonianModes, PentatonicModes
 
+midi_note_vals = {}
+midi_start_val = 21
+midi_end_val = 108
+midi_vel_low = 0
+midi_vel_high = 127
 
-class StepType(IntEnum):
-    HALF = 1
-    WHOLE = 2
-    WHOLEHALF = 3
-
-
-# Notes = Graph
-
-
-# Graph implementation of notes
-# vertices = ['Ab', 'A', 'A#', 'Bb', 'B', 'B#', 'Cb', 'C',  'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'E#', 'Fb', 'F', 'F#', 'Gb', 'G', 'G#']
-# n_vertices = len(vertices)
-# edges = [
-#
-# ]
-
-
-Notes = ["A", "A#/Bb", "B", "C", "C#/Db", "D", "D#,Eb", "E", "F", "F#/Gb", "G", "G#/Ab"]
-Note = Enum("Note", Notes)
-
-IonianModes = Enum(
-    "Modes",
-    ["IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN"],
-)
-PentatonicModes = Enum("PentatonicModes", ["MAJOR", "SECOND", "THIRD", "FOURTH", "MINOR"])
+octave_range = 8
 
 _WholeToneFomula = [
     StepType.WHOLE,
@@ -36,14 +27,15 @@ _WholeToneFomula = [
     StepType.WHOLE,
     StepType.WHOLE,
 ]
+
 _PentatonicFormula = [
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.WHOLEHALF,
     StepType.WHOLE,
-    StepType.WHOLEHALF
-
+    StepType.WHOLEHALF,
 ]
+
 _IonianFormula = [
     StepType.WHOLE,
     StepType.WHOLE,
@@ -54,54 +46,54 @@ _IonianFormula = [
     StepType.HALF,
 ]
 
-
 IonianModesFormulas = {
     mode: cycle_n_times(_IonianFormula, idx) for idx, mode in enumerate(IonianModes)
 }
+
 PentatonicModesFormulas = {
-    mode: cycle_n_times(_PentatonicFormula, idx) for idx, mode in enumerate(PentatonicModes)
+    mode: cycle_n_times(_PentatonicFormula, idx)
+    for idx, mode in enumerate(PentatonicModes)
 }
 
-ScaleFormulas = {
-    **IonianModesFormulas,
-    **PentatonicModesFormulas
-}
-
-
-ChordTypes = Enum(
-    "ChordTypes",
-    ["MAJOR", "MINOR", "DIMINISHED", "SEVENTH", "MAJOR_SEVENTH", "MINOR_SEVENTH"],
-)
+ScaleFormulas = {**IonianModesFormulas, **PentatonicModesFormulas}
 
 
 ChordSymbols = {
-    "MAJOR": ["", "maj"],
-    "MINOR": ["m", "min"],
-    "DIMINISHED": ["°", "dim"],
-    "SEVENTH": ["7", "dom7"],
-    "MAJOR_SEVENTH": ["maj7", "∆7"],
-    "MINOR_SEVENTH": ["min7", "-7"],
+    ChordType.MAJOR: ["", "maj"],
+    ChordType.MINOR: ["m", "min"],
+    ChordType.DIMINISHED: ["°", "dim"],
+    ChordType.SEVENTH: ["7", "dom7"],
+    ChordType.MAJOR_SEVENTH: ["maj7", "∆7"],
+    ChordType.MINOR_SEVENTH: ["min7", "-7"],
 }
 
 ChordFormulas = {
-    "MAJOR": {"description": "", "intervals": [1, 3, 5], "scale": IonianModes.IONIAN},
-    "MINOR": {"description": "", "intervals": [1, 3, 5], "scale": IonianModes.AEOLIAN},
-    "DIMINISHED": {
+    ChordType.MAJOR: {
+        "description": "",
+        "intervals": [1, 3, 5],
+        "scale": IonianModes.IONIAN,
+    },
+    ChordType.MINOR: {
+        "description": "",
+        "intervals": [1, 3, 5],
+        "scale": IonianModes.AEOLIAN,
+    },
+    ChordType.DIMINISHED: {
         "description": "",
         "intervals": [1, 3, 5],
         "scale": IonianModes.LOCRIAN,
     },
-    "SEVENTH": {
+    ChordType.SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
         "scale": IonianModes.MIXOLYDIAN,
     },
-    "MAJOR_SEVENTH": {
+    ChordType.MAJOR_SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
         "scale": IonianModes.IONIAN,
     },
-    "MINOR_SEVENTH": {
+    ChordType.MINOR_SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
         "scale": IonianModes.AEOLIAN,
