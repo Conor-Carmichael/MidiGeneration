@@ -1,4 +1,5 @@
 MIDIUtil
+numpy
 black
 streamlit
 

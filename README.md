@@ -12,3 +12,26 @@ The inputs are to be determined, but plans are for a streamlit user interface, a
 `$python generate_chord_progression.py {root note} {scale} {bpm} {chord:duration:velocity for chord in progression} {repetitions}`
 
 
+
+
+## Details of Implementation
+
+```
+src
+|
+|-generators "To generate progressions etc."
+|
+|-theory "Implementation of music theory principles"
+|
+|-ui "Drivers for user interface"
+|
+|-cli "Drivers for command line interface"
+|
+|-tests "All unit and e2e testing"
+```
+
+### Theory
+
+* Factories
+
+* Inheritance pattern
