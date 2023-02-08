@@ -28,17 +28,33 @@ Octave = Enum("Octave", [str(i + 1) for i in range(8)])
 #
 # ]
 
-Notes = ["A", "Asharp", "B", "C", "Csharp", "D", "Dsharp", "E", "F", "Fsharp", "G", "Gsharp"]
+
+# Make 2d array
+Notes = [
+    "A",
+    "Asharp",
+    "B",
+    "C",
+    "Csharp",
+    "D",
+    "Dsharp",
+    "E",
+    "F",
+    "Fsharp",
+    "G",
+    "Gsharp",
+]
 Note = Enum("Note", Notes)
 
 IonianModes = Enum(
     "Modes",
     ["IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN"],
 )
+
 PentatonicModes = Enum(
     "PentatonicModes", ["MAJOR", "SECOND", "THIRD", "FOURTH", "MINOR"]
 )
-WholeToneModes = Enum("WholeToneModes", ["WHOLETONE"])
+
 
 class StepType(IntEnum):
     HALF = 1
@@ -53,5 +69,14 @@ class StepSequence:
 
 ChordType = Enum(
     "ChordTypes",
-    ["MAJOR", "MINOR", "DIMINISHED", "SEVENTH", "MAJOR_SEVENTH", "MINOR_SEVENTH"],
+    [
+        "MAJOR",
+        "MINOR",
+        "DIMINISHED",
+        "SEVENTH",
+        "MAJOR_SEVENTH",
+        "MINOR_SEVENTH",
+        "SUS2",
+        "SUS4",
+    ],
 )

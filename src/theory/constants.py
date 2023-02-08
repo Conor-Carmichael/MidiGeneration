@@ -8,7 +8,14 @@ Author: Conor Carmichael
 
 from src.utils.utils import cycle_n_times
 from typing import *
-from src.theory.datatypes import StepType, ChordType, IonianModes, PentatonicModes, WholeToneModes
+from src.theory.datatypes import (
+    StepType,
+    ChordType,
+    IonianModes,
+    PentatonicModes,
+)  # , WholeToneModes
+from enum import Enum
+
 
 midi_note_vals = {}
 midi_start_val = 21
@@ -18,7 +25,8 @@ midi_vel_high = 127
 
 octave_range = 8
 
-_WholeToneFomula = [
+# Scale Formula Definitions
+WholeToneFomula = [
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.WHOLE,
@@ -27,12 +35,17 @@ _WholeToneFomula = [
     StepType.WHOLE,
 ]
 
-WholeToneFormulas = {
-    mode: cycle_n_times(_WholeToneFomula, idx)
-    for idx, mode in enumerate(WholeToneModes)
-}
+MixolydianFlat6Formula = [
+    StepType.WHOLE,
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.WHOLE,
+    StepType.WHOLE,
+]
 
-_PentatonicFormula = [
+PentatonicFormula = [
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.WHOLEHALF,
@@ -40,12 +53,7 @@ _PentatonicFormula = [
     StepType.WHOLEHALF,
 ]
 
-PentatonicModesFormulas = {
-    mode: cycle_n_times(_PentatonicFormula, idx)
-    for idx, mode in enumerate(PentatonicModes)
-}
-
-_IonianFormula = [
+IonianFormula = [
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.HALF,
@@ -55,13 +63,16 @@ _IonianFormula = [
     StepType.HALF,
 ]
 
-IonianModesFormulas = {
-    mode: cycle_n_times(_IonianFormula, idx) for idx, mode in enumerate(IonianModes)
-}
+# Chord Formula definitions
 
-
-ScaleFormulas = {**IonianModesFormulas, **PentatonicModesFormulas, **WholeToneFormulas}
-
+IonianChordFormulas = [
+    ChordType.MAJOR,
+    ChordType.MINOR,
+    ChordType.MINOR,
+    ChordType.MAJOR,
+    ChordType.SEVENTH,
+    ChordType.DIMINISHED,
+]
 
 ChordSymbols = {
     ChordType.MAJOR: ["", "maj"],
@@ -102,5 +113,15 @@ ChordFormulas = {
         "description": "",
         "intervals": [1, 3, 5, 7],
         "scale": IonianModes.AEOLIAN,
+    },
+    ChordType.SUS2: {
+        "description": "Suspended 2nd",
+        "intervals": [1, 2, 5],
+        "scale": IonianModes.IONIAN,
+    },
+    ChordType.SUS4: {
+        "description": "Suspended 4th",
+        "intervals": [1, 4, 5],
+        "scale": IonianModes.IONIAN,
     },
 }

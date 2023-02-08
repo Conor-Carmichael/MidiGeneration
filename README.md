@@ -8,4 +8,11 @@
     * Randomly
     * Informed generation
 
+* Chords with 
+    * Inversions
+    * Slash chords
+    * Chord extensions
+    * 
+    * Arpegiation
+
 * More probably

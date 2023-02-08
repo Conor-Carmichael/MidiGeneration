@@ -9,7 +9,6 @@ class NoteSequence(ABC):
     def __init__(
         self, root: Note, formula: StepSequence, name: str, octave: int = 4
     ) -> None:
-
         self.root = root
         self.formula = formula
         self.octave = octave
@@ -25,7 +24,7 @@ class NoteSequence(ABC):
 
     def get_notes(self) -> List[Note]:
         return self.notes
-    
+
     def get_name(self) -> str:
         return self.name.title()
 
