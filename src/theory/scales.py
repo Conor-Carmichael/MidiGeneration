@@ -9,9 +9,16 @@ class Scale(NoteSequence):
     Class to calculate the notes in a scale, and get the chords
     """
 
-    def __init__(self, chord_mapping: List[ChordType], *args, **kwargs) -> None:
+    def __init__(
+        self,
+        chord_mapping: List[ChordType] = None,
+        altered_notes: List = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super(Scale, self).__init__(*args, **kwargs)
         self.chord_mapping = chord_mapping
+        self.altered_notes = altered_notes
         self._set_notes()
 
     def _set_notes(self) -> List[Note]:
@@ -23,15 +30,28 @@ class Scale(NoteSequence):
             self.notes.append(next_note)
             last_note_idx = next_note_idx
 
-    def get_interval(self, interval:int) -> Note:
+    def _set_altered_notes(self) -> None:
+        for alt in self.altered_notes:
+            deg = alt['degree']
+            change = alt['fn']
+            new_note = change(self.notes[deg])
+            self.notes[deg] = new_note
+
+    def _adjust_notation(self) -> None:
+        """Check scale notation for repeated notes, change sharp flat accordingly"""
+        unique_notes = 0
+        
+
+
+    def get_interval(self, interval: int) -> Note:
         # TODO clean this up, kinda confusing.
-        # If I mod it, I mod it by a lower length. 
+        # If I mod it, I mod it by a lower length.
         # If not, the 'second' is actually the index pos 1
         # But the ninth is 9 mod 7  ....
         # It currently works.
         mod_len = len(self.notes[:-1])
-        return self.notes[:-1][ 
-            (interval % mod_len) - 1 if interval > mod_len else interval - 1 
+        return self.notes[:-1][
+            (interval % mod_len) - 1 if interval > mod_len else interval - 1
         ]
 
     def get_available_chords(self) -> List[NoteSequence]:
