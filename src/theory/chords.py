@@ -1,5 +1,6 @@
 from src.theory import *
 from src.theory.note_sequence import NoteSequence
+from src.theory.notes import Note
 from src.theory.constants import ChordFormulas, ChordSymbols, ChordType
 from src.theory.scales import Scale, ScaleFactory, find_scale_factory_for_mode
 from src.utils.utils import cycle_n_times
