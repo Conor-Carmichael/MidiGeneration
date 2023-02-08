@@ -5,15 +5,12 @@ File for declaration of constants:
 
 Author: Conor Carmichael
 """
-
-from src.utils.utils import cycle_n_times
 from typing import *
 from src.theory.datatypes import (
     StepType,
     ChordType,
     IonianModes,
-    PentatonicModes,
-)  # , WholeToneModes
+)  
 from enum import Enum
 
 
@@ -24,6 +21,8 @@ midi_vel_low = 0
 midi_vel_high = 127
 
 octave_range = 8
+
+Alteration = Enum("Alteration", ["NATURAL", "SHARP", "FLAT", "DOUBLESHARP", "DOUBLEFLAT"])
 
 # Scale Formula Definitions
 WholeToneFomula = [
