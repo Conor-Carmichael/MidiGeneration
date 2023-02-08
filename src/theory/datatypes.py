@@ -17,6 +17,8 @@ class MidiNote:
     duration: int
 
 
+
+
 # TODO fix circular import error to avoid magic number 8
 Octave = Enum("Octave", [str(i + 1) for i in range(8)])
 

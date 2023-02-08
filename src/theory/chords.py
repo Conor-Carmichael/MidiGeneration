@@ -8,9 +8,10 @@ from src.utils.utils import cycle_n_times
 class Chord(NoteSequence):
     """
     Class for chord objects, built from a root note, and
-    a scale to pull intervals from. Allows for inversions and 
+    a scale to pull intervals from. Allows for inversions and
     chord extensions to be utilized
     """
+
     def __init__(
         self,
         type: ChordType,
@@ -20,7 +21,6 @@ class Chord(NoteSequence):
         *args,
         **kwargs
     ) -> None:
-
         self.type = type
         self.inversion = inversion
         self.slash_value = slash_value
@@ -42,20 +42,15 @@ class Chord(NoteSequence):
         # Select appropriate notes, considering extensions
         notes = [scale.get_notes()[idx - 1] for idx in self.formula["intervals"]]
         if self.extensions:
-            #TODO: Add in option for flat and sharp extensions
-            
+            # TODO: Add in option for flat and sharp extensions
+
             # Add in the notes by mod the length of the scale // 9 is the 2, 11 is the 4..
 
             # NOTE: The octave is IN the scale. So add 9, the 8th index (9-1) is root note again
             # this messes with using mod to circulate through it
             # Dealt with in scale.get_interval
-            
-            notes.extend(
-                [
-                    scale.get_interval(val)
-                    for val in self.extensions
-                ]
-            )
+
+            notes.extend([scale.get_interval(val) for val in self.extensions])
 
         # Check for inversion
         if self.inversion:
