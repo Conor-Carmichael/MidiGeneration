@@ -1,18 +1,22 @@
+"""
+Utility functions.
+Author: Conor Carmichael
+"""
+
 from typing import *
 from numpy import random
 from math import pow
 import numpy as np
-from src.theory.notes import Note
 
 
-def calc_semitone_diff_pitches(a:float, b:float) -> int:
+def calc_semitone_diff_pitches(a: float, b: float) -> int:
     """Returns absolute value, no direction"""
     diff = 12.00 * np.log2(a / b)
-   
+
     return np.absolute(round(diff))
 
 
-def calc_semitone_diff_notes(a:Note, b:Note) -> int:
+def calc_semitone_diff_notes(a, b) -> int:
     return calc_semitone_diff_pitches(a.pitch, b.pitch)
 
 

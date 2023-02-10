@@ -10,19 +10,26 @@ from src.theory.datatypes import (
     StepType,
     ChordType,
     IonianModes,
-)  
+)
 from enum import Enum
 
 
 midi_note_vals = {}
-midi_start_val = 21
-midi_end_val = 108
+midi_start_val = 0
+midi_end_val = 127
+
+midi_piano_start = 21
+midi_piano_end = 108
+
 midi_vel_low = 0
 midi_vel_high = 127
 
+
 octave_range = 8
 
-Alteration = Enum("Alteration", ["NATURAL", "SHARP", "FLAT", "DOUBLESHARP", "DOUBLEFLAT"])
+SHARP = "♯"
+FLAT = "♭"
+NATURAL = "♮"
 
 # Scale Formula Definitions
 WholeToneFomula = [
@@ -56,6 +63,40 @@ IonianFormula = [
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.HALF,
+    StepType.WHOLE,
+    StepType.WHOLE,
+    StepType.WHOLE,
+    StepType.HALF,
+]
+
+# NOT TESTED
+BluesFormula = [
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.HALF,
+    StepType.HALF,
+    StepType.WHOLE,
+    StepType.WHOLE,
+]
+
+# NOT TESTED
+HarmonicMinorFormula = [
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.WHOLE,
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.WHOLEHALF,
+    StepType.HALF,
+]
+
+# NOT TESTED
+MelodicMinorFormula = [
+    StepType.WHOLE,
+    StepType.HALF,
+    StepType.WHOLE,
     StepType.WHOLE,
     StepType.WHOLE,
     StepType.WHOLE,

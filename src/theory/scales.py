@@ -1,47 +1,67 @@
 from abc import ABC
 from src.theory import *
-from src.theory.note_sequence import NoteSequence
+from src.theory.note_sequence import NoteSequence, NotesFactory
+from src.theory.notes import Note, Notes, NoteGeneric, NOTES
 from src.utils.utils import cycle_n_times
 
 
 class Scale(NoteSequence):
     """
-    Class to calculate the notes in a scale, and get the chords
+    Class to calculate the notes in a scale, and get the chords.
     """
 
     def __init__(
         self,
+        root: Union[NoteGeneric, Note],
         chord_mapping: List[ChordType] = None,
         altered_notes: List = None,
         *args,
         **kwargs,
     ) -> None:
-        super(Scale, self).__init__(*args, **kwargs)
+        self.root = root
         self.chord_mapping = chord_mapping
         self.altered_notes = altered_notes
-        self._set_notes()
+        notes = self._set_notes()
+        super(Scale, self).__init__(notes = notes, *args, **kwargs)
 
     def _set_notes(self) -> List[Note]:
-        self.notes = [self.root]
-        last_note_idx = Notes.index(self.root.name)
+        notes_set = NotesFactory.get_generic_notes()
+        notes = [self.root]
+        prev_note = self.root
+        last_note_idx = notes_set.get_idxs(self.root.name)[0]
+
         for step in self.formula:
-            next_note_idx = (last_note_idx + step) % len(Notes)
-            next_note = Note[Notes[next_note_idx]]
-            self.notes.append(next_note)
-            last_note_idx = next_note_idx
+            note_idx = (last_note_idx + step) % len(notes_set)
+            note_name = notes_set.get_note_by_idx(note_idx).name
+
+            note = NoteGeneric(name=note_name, next_note=None, prev_note=prev_note)
+            notes.append(note)
+
+            last_note_idx = note_idx
+            prev_note = note
+
+        prev_note.next_note = note
+        notes[0].prev_note = note # make circular
+
+        return notes
+        
+        
 
     def _set_altered_notes(self) -> None:
         for alt in self.altered_notes:
-            deg = alt['degree']
-            change = alt['fn']
-            new_note = change(self.notes[deg])
-            self.notes[deg] = new_note
+            deg = alt["degree"]
+            fn = getattr(self.notes[deg], alt["fn"])
+            # operates in place..
+            fn(keep_base_note_name=True)
+            # self.notes[deg] = new_note
 
     def _adjust_notation(self) -> None:
-        """Check scale notation for repeated notes, change sharp flat accordingly"""
-        unique_notes = 0
-        
+        """
+        Check scale notation for repeated notes, change sharp flat accordingly
+        Root note is stuck.
+        """
 
+        unique_notes = 0
 
     def get_interval(self, interval: int) -> Note:
         # TODO clean this up, kinda confusing.
@@ -133,11 +153,11 @@ IonianScaleFact = ScaleFactory(
     IonianChordFormulas,
     modes=[i for i in IonianModes],
 )
-
 PentatonicScaleFact = ScaleFactory(PentatonicModes.MAJOR, PentatonicFormula)
-
 WholeToneScaleFact = ScaleFactory("Whole Tone", WholeToneFomula)
-
+HarmonicMinScaleFact = ScaleFactory("Harmonic Minor", HarmonicMinorFormula)
+MelodicMinScaleFact = ScaleFactory("Meolodic Minor", MelodicMinorFormula)
+BluesScaleFact = ScaleFactory("Blues", BluesFormula)
 MixolydianFlat6Fact = ScaleFactory("Mixolydian Flat 6", MixolydianFlat6Formula)
 
 AllScaleFactories = [
@@ -145,6 +165,9 @@ AllScaleFactories = [
     PentatonicScaleFact,
     WholeToneScaleFact,
     MixolydianFlat6Fact,
+    BluesScaleFact,
+    MelodicMinScaleFact,
+    HarmonicMinScaleFact,
 ]
 
 

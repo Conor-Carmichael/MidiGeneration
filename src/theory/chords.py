@@ -1,6 +1,6 @@
 from src.theory import *
 from src.theory.note_sequence import NoteSequence
-from src.theory.notes import Note
+from src.theory.notes import Note, NoteGeneric
 from src.theory.constants import ChordFormulas, ChordSymbols, ChordType
 from src.theory.scales import Scale, ScaleFactory, find_scale_factory_for_mode
 from src.utils.utils import cycle_n_times
@@ -15,6 +15,7 @@ class Chord(NoteSequence):
 
     def __init__(
         self,
+        root: Union[NoteGeneric, Note],
         type: ChordType,
         slash_value: Note = None,
         inversion: int = 0,
@@ -22,14 +23,17 @@ class Chord(NoteSequence):
         *args,
         **kwargs
     ) -> None:
+
+        self.root = root
         self.type = type
         self.inversion = inversion
         self.slash_value = slash_value
         self.extensions = extensions
 
         formula = ChordFormulas.get(self.type, None)
+        notes = self._set_notes()
         super(Chord, self).__init__(
-            formula=formula, name=self.type.name, *args, **kwargs
+            name=self.type.name, notes=notes, *args, **kwargs
         )
 
     def _set_notes(self) -> None:

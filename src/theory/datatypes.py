@@ -17,8 +17,6 @@ class MidiNote:
     duration: int
 
 
-
-
 # TODO fix circular import error to avoid magic number 8
 Octave = Enum("Octave", [str(i + 1) for i in range(8)])
 
@@ -32,21 +30,25 @@ Octave = Enum("Octave", [str(i + 1) for i in range(8)])
 
 
 # Make 2d array
-Notes = [
-    "A",
-    "Asharp",
-    "B",
-    "C",
-    "Csharp",
-    "D",
-    "Dsharp",
-    "E",
-    "F",
-    "Fsharp",
-    "G",
-    "Gsharp",
-]
-Note = Enum("Note", Notes)
+
+
+# Notes = [
+#     "A",
+#     "Asharp",
+#     "B",
+#     "C",
+#     "Csharp",
+#     "D",
+#     "Dsharp",
+#     "E",
+#     "F",
+#     "Fsharp",
+#     "G",
+#     "Gsharp",
+# ]
+
+
+# Note = Enum("Note", Notes)
 
 IonianModes = Enum(
     "Modes",
