@@ -1,7 +1,7 @@
 from abc import ABC
 from src.theory import *
 from src.theory.note_sequence import NoteSequence, NotesFactory
-from src.theory.notes import Note, Notes, NoteGeneric, NOTES
+from src.theory.notes import Note, NoteGeneric
 from src.utils.utils import cycle_n_times
 
 
@@ -13,12 +13,14 @@ class Scale(NoteSequence):
     def __init__(
         self,
         root: Union[NoteGeneric, Note],
+        formula:StepSequence,
         chord_mapping: List[ChordType] = None,
         altered_notes: List = None,
         *args,
         **kwargs,
     ) -> None:
         self.root = root
+        self.formula = formula
         self.chord_mapping = chord_mapping
         self.altered_notes = altered_notes
         notes = self._set_notes()
@@ -139,11 +141,10 @@ class ScaleFactory:
 
     def generate_scale(self, root_note: Note, octave: int = 4) -> Scale:
         return Scale(
-            self.chord_mappings,
             root=root_note,
             formula=self.steps,
-            name=self.name,
-            octave=octave,
+            chord_mapping=self.chord_mappings,
+            name=self.name
         )
 
 

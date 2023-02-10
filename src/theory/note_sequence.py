@@ -25,7 +25,7 @@ class NoteSequence:
     ]
 
     def __init__(
-        self, notes:List[Union[NoteGeneric, Note]], name: str
+        self, notes:List[Union[NoteGeneric, Note]], name: str=None
     ) -> None:
         self.notes = notes
         self.name = name
