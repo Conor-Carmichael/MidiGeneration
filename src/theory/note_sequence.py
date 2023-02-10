@@ -30,6 +30,9 @@ class NoteSequence:
         self.notes = notes
         self.name = name
 
+    def __contains__(self, ele) -> bool:
+        return ele.name in [n.name for n in self.notes]
+
     def __len__(self) -> int:
         return len(self.notes)
 

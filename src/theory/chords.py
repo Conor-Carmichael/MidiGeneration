@@ -30,7 +30,7 @@ class Chord(NoteSequence):
         self.slash_value = slash_value
         self.extensions = extensions
 
-        formula = ChordFormulas.get(self.type, None)
+        self.formula = ChordFormulas.get(self.type, None)
         notes = self._set_notes()
         super(Chord, self).__init__(
             name=self.type.name, notes=notes, *args, **kwargs
@@ -65,8 +65,8 @@ class Chord(NoteSequence):
         if self.slash_value:
             notes = [self.slash_value] + notes
 
-        self.notes = notes
+        return notes
 
     def is_diatonic(self, scale: Scale) -> bool:
         """Checks if this chord is diatonic in the given scale"""
-        return all([note in scale.get_notes() for note in self.notes])
+        return all([note in scale for note in self.notes])
