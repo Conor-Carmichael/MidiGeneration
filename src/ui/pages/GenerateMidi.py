@@ -3,6 +3,9 @@ from src.ui.Progressions import display_current_chords
 
 import streamlit as st
 
+if not st.session_state.midi_instr:
+    st.session_state.midi_instr = []
+
 set_chords_cont = st.container()
 time_sig_cont = st.container()
 
@@ -14,6 +17,12 @@ def project_settings_form(container:st.container):
 
     return bpm, beats_per_measure, note_duration_per_beat
 
+
+def set_chord_info(chords:List):
+    for chord_prog in st.session_state.all_progressions:
+        for chord in chord_prog:
+            # Get start / dur / vel / arpeg
+            ...
 
 # Start display code
 

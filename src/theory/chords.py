@@ -152,3 +152,7 @@ class MidiChord(Chord):
             chord.extensions,
             chord.altered_notes,
         )
+
+    def __repr__(self) -> str:
+        # TODO Set up to be ready for writeline to midi file
+        return super().__repr__()
