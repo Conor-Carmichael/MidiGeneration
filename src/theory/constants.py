@@ -25,7 +25,22 @@ midi_vel_low = 0
 midi_vel_high = 127
 
 
+bpm_range = (60, 200)
+beats_per_measure_range = (2, 8)
+note_duration_per_beat_range = (2, 8)
 octave_range = 8
+inversion_values = [i for i in range(5)]
+
+note_alterations = [
+    # This should be changed to dynamic soon
+    {"degree": 5, "fn": "flatten"},
+    {"degree": 5, "fn": "sharpen"},
+    {"degree": 9, "fn": "sharpen"},
+    {"degree": 9, "fn": "flatten"},
+    {"degree": 9, "fn": "flatten"},
+    {"degree": 11, "fn": "sharpen"},
+    {"degree": 11, "fn": "flatten"},
+]
 
 SHARP = "♯"
 FLAT = "♭"
