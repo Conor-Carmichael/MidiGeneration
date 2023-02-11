@@ -19,7 +19,7 @@ class Chord(NoteSequence):
         type: ChordType,
         slash_value: Note = None,
         inversion: int = 0,
-        extensions: List[str] = None,
+        extensions: List[int] = [],
         altered_notes: List[dict] = None,
         *args,
         **kwargs
@@ -46,7 +46,8 @@ class Chord(NoteSequence):
             else ValueError("Inversion value invalid")
         )
         self.slash_value = slash_value
-        self.extensions = extensions
+        self.extensions = sorted(extensions)
+        self.has_extensions = len(self.extensions) > 0 and max(self.extensions) > 8 
         self.altered_notes = altered_notes
 
         if not self.slash_value is None and self.inversion > 0:
@@ -60,13 +61,32 @@ class Chord(NoteSequence):
             raise NotImplementedError("altered_notes for chord")
             self.set_altered_notes(notes)
 
-    def __str__(self, alt_symbol:bool=False) -> str:
-        symb =  ChordSymbols[self.type][0] if not alt_symbol else ChordSymbols[self.type][1]
-        s = f"{self.root}{symb}"
+    def __str__(self) -> str:
+        
+        symb = ChordSymbols[self.type][1] if self.has_extensions else ChordSymbols[self.type][0]
+        s = f"{self.root} {symb}"
+        if self.has_extensions:
+            # To calculate if C add 11 or just C 11. 
+            # Must include all sub extensions, so if index of the ext in the possible extensions,
+            # Plus 1 is the same as the length of the current extensions, then all relevant ext
+            # are included. IF extensions = [9, 11], max ext is 11, the index of 11 is 1, must be 2 extensions (9 and 11) 
+            # to be a C11 chord, else if only 11 is present its an Add 11 chord
+            max_ext = max(self.extensions)
+            max_ext_idx = extension_values.index(max_ext)
+
+            if max_ext != 0 and max_ext_idx + 1 == len(self.extensions) :
+                ext_str = str(max_ext)
+            else:
+                ext_str = "add " + ", ".join([str(e) for e in self.extensions])
+
+            s += " " + ext_str
+
         if self.slash_value:
             s += " / " + self.slash_value
         elif self.inversion > 0:
             s += f" / {self.notes[0]}"
+        # if self.extensions:
+        #     s 
         return s
 
     def _set_notes(self) -> None:
@@ -91,8 +111,8 @@ class Chord(NoteSequence):
             notes.extend([scale.get_interval(val) for val in self.extensions])
 
         # Check for inversion
-        if self.inversion:
-            notes = cycle_n_times(self.inversion)
+        if self.inversion > 0:
+            notes = cycle_n_times(notes, self.inversion)
 
         # Check for altered root
         if self.slash_value:
