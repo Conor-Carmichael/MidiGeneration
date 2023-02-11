@@ -24,9 +24,7 @@ class NoteSequence:
         "B",
     ]
 
-    def __init__(
-        self, notes:List[Union[NoteGeneric, Note]], name: str=None
-    ) -> None:
+    def __init__(self, notes: List[Union[NoteGeneric, Note]], name: str = None) -> None:
         self.notes = notes
         self.name = name
 
@@ -41,6 +39,16 @@ class NoteSequence:
 
     def __getitem__(self, req: str) -> List:
         return list(filter(lambda note: note.name == req, self.notes))
+
+    def set_altered_notes(self, notes) -> None:
+        assert len(self.altered_notes) < 7, "Cannot alter seven notes"
+        for alt in self.altered_notes:
+            deg_idx = alt["degree"] - 1
+            assert 8 > deg_idx > 1, "Degree index must be between 1, 8 uninclusive."
+            fn = getattr(notes[deg_idx], alt["fn"])
+            # operates in place..
+            fn(keep_base_note_name=True)
+            # self.notes[deg] = new_note
 
     def get_idxs(self, note_name: str) -> List[int]:
         """Get the index of where the note appears in list"""
@@ -82,8 +90,8 @@ class NoteSequence:
     def get_notes(self) -> List[Note]:
         return self.notes
 
-class NotesFactory:
 
+class NotesFactory:
     def __init__(self) -> None:
         pass
 
@@ -139,6 +147,6 @@ class NotesFactory:
             prev_note = note
 
         prev_note.next_note = note
-        notes[0].prev_note = note # make circular
+        notes[0].prev_note = note  # make circular
 
         return NoteSequence(notes=notes, name="Generic Notes")
