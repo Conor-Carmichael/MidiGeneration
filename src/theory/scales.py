@@ -19,6 +19,14 @@ class Scale(NoteSequence):
         *args,
         **kwargs,
     ) -> None:
+        """Initializer a Scale object
+
+        Args:
+            root (Union[NoteGeneric, Note]): Note obj for root of scale
+            formula (StepSequence): How to derive the scale
+            chord_mapping (List[List[ChordType]], optional): Map a scale degree to a chord type. Defaults to None.
+            altered_notes (List, optional): In format [{"degree": int, "fn": flatten/sharpen}, ...]. Defaults to None.
+        """
         self.root = root
         self.formula = formula
         self.chord_mapping = chord_mapping
@@ -27,7 +35,15 @@ class Scale(NoteSequence):
 
         super(Scale, self).__init__(notes=notes, *args, **kwargs)
 
+        if self.altered_notes:
+            self.set_altered_notes(notes)
+
     def _set_notes(self) -> List[Note]:
+        """Used to set the notes of the scale based on the root and formula.
+
+        Returns:
+            List[Note]: Returns value for clarity, and set it in __init__
+        """
         notes_set = NotesFactory.get_generic_notes()
         notes = [self.root]
         prev_note = self.root
@@ -46,20 +62,7 @@ class Scale(NoteSequence):
         prev_note.next_note = note
         notes[0].prev_note = note  # make circular
 
-        if self.altered_notes:
-            self._set_altered_notes(notes)
-
         return notes
-
-    def _set_altered_notes(self, notes) -> None:
-        assert len(self.altered_notes) < 7 , "Cannot alter seven notes"
-        for alt in self.altered_notes:
-            deg_idx = alt["degree"] - 1
-            assert 8 > deg_idx > 1 , "Degree index must be between 1, 8 uninclusive."
-            fn = getattr(notes[deg_idx], alt["fn"])
-            # operates in place..
-            fn(keep_base_note_name=True)
-            # self.notes[deg] = new_note
 
     def _adjust_notation(self) -> None:
         """
@@ -70,6 +73,14 @@ class Scale(NoteSequence):
         unique_notes = 0
 
     def get_interval(self, interval: int) -> Note:
+        """Get the scale degree for the given interval
+
+        Args:
+            interval (int): What to get.
+
+        Returns:
+            Note: Returns the note requested.
+        """
         # TODO clean this up, kinda confusing.
         # If I mod it, I mod it by a lower length.
         # If not, the 'second' is actually the index pos 1
@@ -143,13 +154,13 @@ class ScaleFactory:
         else:
             return None
 
-    def generate_scale(self, root_note: Note, altered_notes:dict=None) -> Scale:
+    def generate_scale(self, root_note: Note, altered_notes: dict = None) -> Scale:
         return Scale(
             root=root_note,
             formula=self.steps,
             chord_mapping=self.chord_mappings,
             name=self.name,
-            altered_notes=altered_notes
+            altered_notes=altered_notes,
         )
 
 

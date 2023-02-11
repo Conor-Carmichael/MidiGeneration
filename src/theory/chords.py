@@ -20,18 +20,54 @@ class Chord(NoteSequence):
         slash_value: Note = None,
         inversion: int = 0,
         extensions: List[str] = None,
+        altered_notes: List[dict] = None,
         *args,
         **kwargs
     ) -> None:
+        """Initialize a Chord.
+
+        Args:
+            root (Union[NoteGeneric, Note]): Note for root of chord.
+            type (ChordType): Enum of ChordType
+            slash_value (Note, optional): Altered root note for the chord. Defaults to None.
+            inversion (int, optional): Inversion value for chord. Defaults to 0.
+            extensions (List[str], optional): Chord extensions, built off chord_type scale. Defaults to None.
+            altered_notes (List[dict], optional): In format [{"degree": int, "fn": flatten/sharpen}, ...]. Defaults to None.
+
+        Raises:
+            NotImplementedError: Altered notes needs to be implemented for chords
+        """
+
         self.root = root
         self.type = type
-        self.inversion = inversion
+        self.inversion = (
+            inversion
+            if inversion in inversion_values
+            else ValueError("Inversion value invalid")
+        )
         self.slash_value = slash_value
         self.extensions = extensions
+        self.altered_notes = altered_notes
+
+        if not self.slash_value is None and self.inversion > 0:
+            raise ValueError("Cannot invert a slash chord.")
 
         self.formula = ChordFormulas.get(self.type, None)
         notes = self._set_notes()
         super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
+
+        if self.altered_notes:
+            raise NotImplementedError("altered_notes for chord")
+            self.set_altered_notes(notes)
+
+    def __str__(self, alt_symbol:bool=False) -> str:
+        symb =  ChordSymbols[self.type][0] if not alt_symbol else ChordSymbols[self.type][1]
+        s = f"{self.root}{symb}"
+        if self.slash_value:
+            s += " / " + self.slash_value
+        elif self.inversion > 0:
+            s += f" / {self.notes[0]}"
+        return s
 
     def _set_notes(self) -> None:
         notes = []
