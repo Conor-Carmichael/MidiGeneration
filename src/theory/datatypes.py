@@ -76,6 +76,8 @@ ChordType = Enum(
     [
         "MAJOR",
         "MINOR",
+        "MAJOR6TH",
+        "MINOR6TH",
         "DIMINISHED",
         "SEVENTH",
         "MAJOR_SEVENTH",

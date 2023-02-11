@@ -30,6 +30,7 @@ beats_per_measure_range = (2, 8)
 note_duration_per_beat_range = (2, 8)
 octave_range = 8
 inversion_values = [i for i in range(5)]
+extension_values = [9, 11, 13, 15]
 
 note_alterations = [
     # This should be changed to dynamic soon
@@ -130,12 +131,17 @@ IonianChordFormulas = [
 ]
 
 ChordSymbols = {
+    # First is for triad, second is for extended 
     ChordType.MAJOR: ["", "maj"],
     ChordType.MINOR: ["m", "min"],
+    ChordType.MAJOR6TH: ["6", "maj6"],
+    ChordType.MINOR6TH: ["m6", "min6"],
     ChordType.DIMINISHED: ["°", "dim"],
-    ChordType.SEVENTH: ["7", "dom7"],
+    ChordType.SEVENTH: ["7", ""],
     ChordType.MAJOR_SEVENTH: ["maj7", "∆7"],
     ChordType.MINOR_SEVENTH: ["min7", "-7"],
+    ChordType.SUS2: ["Sus2", "Sus2"],
+    ChordType.SUS4: ["Sus4", "Sus4"],
 }
 
 ChordFormulas = {
@@ -147,6 +153,16 @@ ChordFormulas = {
     ChordType.MINOR: {
         "description": "",
         "intervals": [1, 3, 5],
+        "scale": IonianModes.AEOLIAN,
+    },
+    ChordType.MAJOR6TH: {
+        "description": "",
+        "intervals": [1, 3, 5, 6],
+        "scale": IonianModes.IONIAN,
+    },
+    ChordType.MINOR6TH: {
+        "description": "",
+        "intervals": [1, 3, 5, 6],
         "scale": IonianModes.AEOLIAN,
     },
     ChordType.DIMINISHED: {
