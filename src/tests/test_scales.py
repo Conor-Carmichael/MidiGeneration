@@ -15,28 +15,45 @@ from src.theory import *
 
 NOTES = NotesFactory.get_generic_notes()
 
+
 @pytest.mark.parametrize(
-    "root,alts,exp",[
-        (NOTES["C"][0], [{"degree":7,"fn":"flatten"}], f"C, D, E, F, G, A, B{FLAT}, C"  ),  
-        (NOTES["C"][0], [{"degree":7,"fn":"flatten"}, {"degree":6,"fn":"flatten"}], f"C, D, E, F, G, A{FLAT}, B{FLAT}, C"  )
-    ]
+    "root,alts,exp",
+    [
+        (
+            NOTES["C"][0],
+            [{"degree": 7, "fn": "flatten"}],
+            f"C, D, E, F, G, A, B{FLAT}, C",
+        ),
+        (
+            NOTES["C"][0],
+            [{"degree": 7, "fn": "flatten"}, {"degree": 6, "fn": "flatten"}],
+            f"C, D, E, F, G, A{FLAT}, B{FLAT}, C",
+        ),
+    ],
 )
 def test_ionian_note_alteration(root, alts, exp):
-
     scale = IonianScaleFact.generate_scale(root, altered_notes=alts)
     assert str(scale) == exp
 
 
 @pytest.mark.parametrize(
-    "root,alts,exp",[
-        (NOTES["C"][0], [{"degree":0,"fn":"flatten"}], f"C, D, E, F, G, A, B{FLAT}, C"  ),  
-        (NOTES["C"][0], [{"degree":47,"fn":"flatten"}, {"degree":6,"fn":"flatten"}], f"C, D, E, F, G, A{FLAT}, B{FLAT}, C"  )
-    ]
+    "root,alts,exp",
+    [
+        (
+            NOTES["C"][0],
+            [{"degree": 0, "fn": "flatten"}],
+            f"C, D, E, F, G, A, B{FLAT}, C",
+        ),
+        (
+            NOTES["C"][0],
+            [{"degree": 47, "fn": "flatten"}, {"degree": 6, "fn": "flatten"}],
+            f"C, D, E, F, G, A{FLAT}, B{FLAT}, C",
+        ),
+    ],
 )
 def test_ionian_note_alteration_ioob(root, alts, exp):
     with pytest.raises(Exception):
         scale = IonianScaleFact.generate_scale(root, altered_notes=alts)
-
 
 
 def test_ionian_scale_factory():
