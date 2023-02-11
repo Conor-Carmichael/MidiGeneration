@@ -13,7 +13,7 @@ class Scale(NoteSequence):
     def __init__(
         self,
         root: Union[NoteGeneric, Note],
-        formula:StepSequence,
+        formula: StepSequence,
         chord_mapping: List[ChordType] = None,
         altered_notes: List = None,
         *args,
@@ -24,7 +24,7 @@ class Scale(NoteSequence):
         self.chord_mapping = chord_mapping
         self.altered_notes = altered_notes
         notes = self._set_notes()
-        super(Scale, self).__init__(notes = notes, *args, **kwargs)
+        super(Scale, self).__init__(notes=notes, *args, **kwargs)
 
     def _set_notes(self) -> List[Note]:
         notes_set = NotesFactory.get_generic_notes()
@@ -43,11 +43,9 @@ class Scale(NoteSequence):
             prev_note = note
 
         prev_note.next_note = note
-        notes[0].prev_note = note # make circular
+        notes[0].prev_note = note  # make circular
 
         return notes
-        
-        
 
     def _set_altered_notes(self) -> None:
         for alt in self.altered_notes:
@@ -144,7 +142,7 @@ class ScaleFactory:
             root=root_note,
             formula=self.steps,
             chord_mapping=self.chord_mappings,
-            name=self.name
+            name=self.name,
         )
 
 

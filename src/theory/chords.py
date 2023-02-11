@@ -23,7 +23,6 @@ class Chord(NoteSequence):
         *args,
         **kwargs
     ) -> None:
-
         self.root = root
         self.type = type
         self.inversion = inversion
@@ -32,9 +31,7 @@ class Chord(NoteSequence):
 
         self.formula = ChordFormulas.get(self.type, None)
         notes = self._set_notes()
-        super(Chord, self).__init__(
-            name=self.type.name, notes=notes, *args, **kwargs
-        )
+        super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
 
     def _set_notes(self) -> None:
         notes = []

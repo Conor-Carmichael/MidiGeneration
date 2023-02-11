@@ -7,6 +7,7 @@ from src.theory import *
 
 NOTES = NotesFactory.get_generic_notes()
 
+
 @pytest.mark.parametrize(
     "root,expected",
     [
@@ -50,12 +51,11 @@ def test_minor_triad(root, expected):
 )
 def test_diminished_triad(root, expected):
     args = {
-        "root": root,   
+        "root": root,
         "type": ChordType.DIMINISHED,
     }
     chord = Chord(**args)
     assert str(chord) == expected
-
 
 
 @pytest.mark.parametrize(
@@ -78,7 +78,6 @@ def test_major_chord_extensions(root, extensions, expected):
     assert str(chord) == expected
 
 
-
 @pytest.mark.parametrize(
     "root,extensions,expected",
     [
@@ -97,8 +96,7 @@ def test_major_chord_extensions(root, extensions, expected):
         (
             NOTES["C"][0],
             [9, 13],
-            f"C, D{SHARP}, G, D, G{SHARP}"
-            ,
+            f"C, D{SHARP}, G, D, G{SHARP}",
         ),
     ],
 )
@@ -106,7 +104,6 @@ def test_minor_chord_extensions(root, extensions, expected):
     args = {"root": root, "type": ChordType.MINOR, "extensions": extensions}
     chord = Chord(**args)
     assert str(chord) == expected
-
 
 
 @pytest.mark.parametrize(

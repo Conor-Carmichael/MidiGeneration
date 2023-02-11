@@ -24,9 +24,7 @@ class NoteSequence:
         "B",
     ]
 
-    def __init__(
-        self, notes:List[Union[NoteGeneric, Note]], name: str=None
-    ) -> None:
+    def __init__(self, notes: List[Union[NoteGeneric, Note]], name: str = None) -> None:
         self.notes = notes
         self.name = name
 
@@ -82,8 +80,8 @@ class NoteSequence:
     def get_notes(self) -> List[Note]:
         return self.notes
 
-class NotesFactory:
 
+class NotesFactory:
     def __init__(self) -> None:
         pass
 
@@ -139,6 +137,6 @@ class NotesFactory:
             prev_note = note
 
         prev_note.next_note = note
-        notes[0].prev_note = note # make circular
+        notes[0].prev_note = note  # make circular
 
         return NoteSequence(notes=notes, name="Generic Notes")

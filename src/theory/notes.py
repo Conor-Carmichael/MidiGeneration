@@ -21,6 +21,12 @@ class NoteGeneric:
         self.next_note = next_note
         self.prev_note = prev_note
 
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, NoteGeneric) and self.name == __o.name:
+            return True
+        else:
+            return False
+
     def __str__(self) -> str:
         return f"{self.base_note_name}{self.alter}"
 
@@ -58,6 +64,12 @@ class Note(NoteGeneric):
         self.midi_value = midi_value
         self.pitch = get_pitch_from_midi_value(self.midi_value)
 
+    def __eq__(self, __o: object) -> bool:
+        if isinstance(__o, NoteGeneric) and self.midi_value == __o.midi_value:
+            return True
+        else:
+            return False
+
     def change_name_notation(self, new_base_note: str, new_alter: str) -> None:
         self.base_note_name = new_base_note
         self.alter = new_alter
@@ -73,5 +85,3 @@ class Note(NoteGeneric):
         super().flatten(keep_base_note_name)
 
         self.pitch = self.pitch * np.power(2, -1 * (1 / 12))
-
-
