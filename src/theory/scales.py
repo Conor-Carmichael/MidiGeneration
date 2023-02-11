@@ -24,6 +24,7 @@ class Scale(NoteSequence):
         self.chord_mapping = chord_mapping
         self.altered_notes = altered_notes
         notes = self._set_notes()
+
         super(Scale, self).__init__(notes=notes, *args, **kwargs)
 
     def _set_notes(self) -> List[Note]:
@@ -45,12 +46,17 @@ class Scale(NoteSequence):
         prev_note.next_note = note
         notes[0].prev_note = note  # make circular
 
+        if self.altered_notes:
+            self._set_altered_notes(notes)
+
         return notes
 
-    def _set_altered_notes(self) -> None:
+    def _set_altered_notes(self, notes) -> None:
+        assert len(self.altered_notes) < 7 , "Cannot alter seven notes"
         for alt in self.altered_notes:
-            deg = alt["degree"]
-            fn = getattr(self.notes[deg], alt["fn"])
+            deg_idx = alt["degree"] - 1
+            assert 8 > deg_idx > 1 , "Degree index must be between 1, 8 uninclusive."
+            fn = getattr(notes[deg_idx], alt["fn"])
             # operates in place..
             fn(keep_base_note_name=True)
             # self.notes[deg] = new_note
@@ -137,12 +143,13 @@ class ScaleFactory:
         else:
             return None
 
-    def generate_scale(self, root_note: Note, octave: int = 4) -> Scale:
+    def generate_scale(self, root_note: Note, altered_notes:dict=None) -> Scale:
         return Scale(
             root=root_note,
             formula=self.steps,
             chord_mapping=self.chord_mappings,
             name=self.name,
+            altered_notes=altered_notes
         )
 
 
