@@ -59,9 +59,11 @@ class Note(NoteGeneric):
     To allow for more significant alterations, the Note class.
     """
 
-    def __init__(self, midi_value: int, *args, **kwargs) -> None:
+    def __init__(self, midi_value: int, duration:int, velocity:int, *args, **kwargs) -> None:
         super(Note, self).__init__(*args, **kwargs)
         self.midi_value = midi_value
+        self.duration = duration
+        self.velocity = velocity
         self.pitch = get_pitch_from_midi_value(self.midi_value)
 
     def __eq__(self, __o: object) -> bool:
