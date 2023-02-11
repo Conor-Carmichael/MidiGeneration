@@ -14,6 +14,8 @@ page_title = "Chord Progression Generator"
 notes_list = NotesFactory.get_generic_notes()
 if not "current_progression" in st.session_state:
     st.session_state.current_progression = [] 
+if not "adding_chord" in st.session_state:
+    st.session_state.adding_chord = False
 
 st.title(page_title)
 project_settings_container = st.container()
@@ -45,7 +47,8 @@ def add_chord():
 def chord_input_form(container: st.container, form: st.form):
     # with container:
     st.markdown("<h3>Define a Chord</h3>", unsafe_allow_html=True)
-    with st.form(key="KEY", clear_on_submit=True):
+    with container:
+    # with st.form(key="KEY", clear_on_submit=True):
         root_note_str = st.selectbox(
             "Root Note", options=[n.name for n in notes_list.get_notes()]
         )
@@ -63,7 +66,7 @@ def chord_input_form(container: st.container, form: st.form):
             "Altered Notes", options=note_alterations, format_func=fmt_note_alter
         )
 
-        submitted = st.form_submit_button("Add", on_click=set_chord_from_args, args=(
+        st.button("Add", on_click=set_chord_from_args, args=(
                 root_note_str,
                 chord_type,
                 slash_value,
@@ -76,8 +79,8 @@ def set_chord_from_args(root, ct, slash, inv, ext, alters):
     print(root, ct, slash, inv, ext, alters)
     root = NoteGeneric(name=root)
     chord = Chord(root, ct, slash, inv, ext, alters)
-
     st.session_state.current_progression.append(chord)
+    st.session_state.adding_chord = False
 
 def display_chord(chord: Chord, container: st.container):
     with container:
@@ -102,8 +105,13 @@ def display_current_chords(container: st.container):
 bpm, numerator, denominator = project_settings_form(project_settings_container)
 
 display_current_chords(chord_disp_container)
-print([str(c) for c in st.session_state.current_progression])
-if st.button("Add a chord"):
+
+# Allows it to be set false elsewhere in code
+temp = st.button("Add a chord")
+st.session_state.adding_chord = temp if temp else st.session_state.adding_chord
+print(st.session_state.adding_chord)
+if st.session_state.adding_chord:
     chord_args = add_chord()
     if chord_args:
         set_chord_from_args(*chord_args)
+
