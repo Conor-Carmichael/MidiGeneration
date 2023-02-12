@@ -20,8 +20,15 @@ def set_sidebar():
     st.sidebar.button("Load State", on_click=load_state, disabled=True)
     st.sidebar.button("Save State", on_click=save_state, disabled=True)
 
-    st.sidebar.text_input("Midi File Name", value="midi_notes.mid", )
-    st.sidebar.text_input("Destination", value=save_dir)
+    st.session_state.dest = os.path.join(
+        st.sidebar.text_input("Destination", value=os.path.join(os.getcwd(), "midi_files")),
+        st.sidebar.text_input("Midi File Name", value="midi_notes.mid")
+    ) 
+
+    st.sidebar.button(
+        "..---== Create Midi File ==---..", on_click=generate_midi_files
+    )
+
 
 def fmt_name(name_enum: object) -> str:
     return " ".join(name_enum.name.split("_")).title()
@@ -141,8 +148,8 @@ def chord_midi_form(chord: Chord, chord_idx: int, prog_idx: int):
         value=60,
         key="velocity." + key,
     )
-    pitch = cols[2].slider(
-        "Pitch", min_value=2, max_value=6, value=4, key="pitch." + key
+    octave = cols[2].slider(
+        "Octave", min_value=2, max_value=6, value=4, key="octave." + key
     )
     note_duration = cols[3].select_slider(
         "Note Duration", note_lengths, value=note_lengths[-1], key="note_duration." + key
@@ -152,7 +159,7 @@ def chord_midi_form(chord: Chord, chord_idx: int, prog_idx: int):
         "arpeggiated": arp,
         "random_velocity": rand_vel,
         "velocity": velocity,
-        "pitch": pitch,
+        "octave": octave,
         "note_duration": note_duration,
     }
 

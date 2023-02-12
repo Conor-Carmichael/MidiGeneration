@@ -90,6 +90,24 @@ class NoteSequence:
     def get_notes(self) -> List[Note]:
         return self.notes
 
+    def conv_generic_notes_to_midi_notes(
+        self, start_time: int, note_duration: int, velocity: int, octave:int
+    ) -> None:
+        
+        new_notes = []
+        for note in self.notes:
+            midi_value = (octave * len(self._note_strings)) + self._note_strings.index(note.name)
+            new_notes.append(Note(
+                midi_value=midi_value,
+                duration=note_duration,
+                velocity=velocity,
+                start_time=start_time,
+                name=note.name,
+                next_note=note.next_note,
+                prev_note=note.prev_note
+            ))
+        self.notes = new_notes
+
 
 class NotesFactory:
     def __init__(self) -> None:

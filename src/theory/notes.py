@@ -52,6 +52,8 @@ class NoteGeneric:
             self.base_note_name = self.name[0]
             self.alter = self.name[1:] if len(self.name) > 1 else ""
 
+    def __repr__(self) -> str:
+        return f"{self.name}"
 
 class Note(NoteGeneric):
 
@@ -59,11 +61,12 @@ class Note(NoteGeneric):
     To allow for more significant alterations, the Note class.
     """
 
-    def __init__(self, midi_value: int, duration:int, velocity:int, *args, **kwargs) -> None:
+    def __init__(self, midi_value: int, duration:int, velocity:int, start_time:any, *args, **kwargs) -> None:
         super(Note, self).__init__(*args, **kwargs)
         self.midi_value = midi_value
         self.duration = duration
         self.velocity = velocity
+        self.start_time = start_time
         self.pitch = get_pitch_from_midi_value(self.midi_value)
 
     def __eq__(self, __o: object) -> bool:
@@ -85,5 +88,8 @@ class Note(NoteGeneric):
     def flatten(self, keep_base_note_name: bool = False):
         """Does not change base note name if not requested, just adds flat"""
         super().flatten(keep_base_note_name)
-
         self.pitch = self.pitch * np.power(2, -1 * (1 / 12))
+
+
+    def __repr__(self) -> str:
+        return f"{self.name} -> {self.midi_value} (Vel:{self.velocity}, Dur:{self.duration}, T:{self.start_time})"

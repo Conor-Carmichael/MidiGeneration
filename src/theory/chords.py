@@ -54,11 +54,12 @@ class Chord(NoteSequence):
             raise ValueError("Cannot invert a slash chord.")
 
         self.formula = ChordFormulas.get(self.type, None)
-        if not kwargs['notes']:
+        if kwargs.get('notes', None) is None:
             notes = self._set_notes() 
         else:
             notes = kwargs['notes']
             del kwargs['notes']
+
         super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
 
         if self.altered_notes:
@@ -127,6 +128,9 @@ class Chord(NoteSequence):
 
         return notes
 
+    def conv_notes_to_midi(self, octave:int) -> None:
+        self.notes = [ Note.get_from_generic(octave=octave, note=note) for note in self.notes ]
+
     def is_diatonic(self, scale: Scale) -> bool:
         """Checks if this chord is diatonic in the given scale"""
         return all([note in scale for note in self.notes])
@@ -143,10 +147,12 @@ class MidiChord(Chord):
         self.pitch = pitch
         super(MidiChord, self).__init__(*args, **kwargs)
 
+
     @classmethod
     def get_from_chord(
         cls, start_time: int, note_duration: int, arpeggiated:bool, velocity: int, pitch:int, chord: Chord
     ) -> object:
+
         return MidiChord(
             start_time=start_time,
             note_duration=note_duration,
@@ -169,29 +175,38 @@ class MidiChord(Chord):
         return super().__repr__()
 
 
-def write_chords_to_midi_file(
+def get_midi_object_from_progression(
     bpm:int,
     track:int,
-    chord_progressions:List[List[MidiChord]]
-):
-    midifle = midi.MIDIFile()
+    chord_progressions:List[List[Chord]]
+) -> midi.MIDIFile :
 
+    midifle = midi.MIDIFile()
     curr_beat = 0
     midifle.addTempo(track, curr_beat, bpm)
-
+  
     for chord_progression in chord_progressions:
-        for chord in chord_progression:
 
-            pitches = [n.midi_value for n in chord.get_notes()]
+        for chord_midi_dict in chord_progression:
+            # print
+            chord = chord_midi_dict['chord']
+            print("\n\n")
+            print("CHORD BEFoRE: ", [ c.__repr__() for c in chord.get_notes()])
+            midi_instr = chord_midi_dict['midi']
+            
+            chord.conv_generic_notes_to_midi_notes(
+                **midi_instr
+            )
+            print("CHORD AFTER: ", [ c.__repr__() for c in chord.get_notes()])
 
-            for p in pitches:
+            for note in chord.get_notes():
                 midifle.addNote(
-                    track=0,
+                    track=track,
                     channel=0,
-                    pitch=p,
+                    pitch=note.midi_value,
                     time=curr_beat,
-                    duration=chord.note_duration,
-                    volume=chord.velocity
-                )
+                    duration=note.duration,
+                    volume=note.velocity
+                    )
 
     return midifle

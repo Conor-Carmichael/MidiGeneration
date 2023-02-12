@@ -5,6 +5,7 @@
 import os
 import streamlit as st
 from pickle import load, dump
+from src.theory import *
 
 # Input styles:
 # * Free: Select from any chords
@@ -29,6 +30,8 @@ def check_and_init_state():
         st.session_state.time_settings = (60, 4, 4)
     if not "midi_instr" in st.session_state:
         st.session_state.midi_instr = []
+    if not "dest" in st.session_state:
+        st.session_state.dest = ""
 
 state_file = os.path.join(".", "src", "ui", "store", "state.pkl")
 
@@ -99,5 +102,13 @@ def load_state():
         print("Exception: ", e)
         st.warning("Failed to load state...")
 
+
 def generate_midi_files():
-    write_chords_to_midi_file()
+    midi_obj = get_midi_object_from_progression(
+        bpm=st.session_state.time_settings[0],
+        track=0,
+        chord_progressions=st.session_state.midi_instr
+    )
+
+    with open(st.session_state.dest, "wb") as f:
+        midi_obj.writeFile(f)
