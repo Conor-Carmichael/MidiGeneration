@@ -54,7 +54,11 @@ class Chord(NoteSequence):
             raise ValueError("Cannot invert a slash chord.")
 
         self.formula = ChordFormulas.get(self.type, None)
-        notes = self._set_notes()
+        if not kwargs['notes']:
+            notes = self._set_notes() 
+        else:
+            notes = kwargs['notes']
+            del kwargs['notes']
         super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
 
         if self.altered_notes:
@@ -130,29 +134,64 @@ class Chord(NoteSequence):
 
 class MidiChord(Chord):
     def __init__(
-        self, start_time: int, duration: int, velocity: int, *args, **kwargs
+        self, start_time: int, arpeggiated:bool, note_duration: int, velocity: int, pitch:int, *args, **kwargs
     ) -> None:
         self.start_time = start_time
-        self.duration = duration
+        self.note_duration = note_duration
+        self.arpeggiated = arpeggiated
         self.velocity = velocity
+        self.pitch = pitch
         super(MidiChord, self).__init__(*args, **kwargs)
 
     @classmethod
     def get_from_chord(
-        cls, start_time: int, duration: int, velocity: int, chord: Chord
+        cls, start_time: int, note_duration: int, arpeggiated:bool, velocity: int, pitch:int, chord: Chord
     ) -> object:
         return MidiChord(
-            start_time,
-            duration,
-            velocity,
-            chord.root,
-            chord.type,
-            chord.slash_value,
-            chord.inversion,
-            chord.extensions,
-            chord.altered_notes,
+            start_time=start_time,
+            note_duration=note_duration,
+            velocity=velocity,
+            arpeggiated=arpeggiated,
+            pitch=pitch,
+            root=chord.root,
+            type=chord.type,
+            slash_value=chord.slash_value,
+            inversion=chord.inversion,
+            extensions=chord.extensions,
+            altered_notes=chord.altered_notes,
+            notes = chord.notes
         )
 
     def __repr__(self) -> str:
         # TODO Set up to be ready for writeline to midi file
+
+
         return super().__repr__()
+
+
+def write_chords_to_midi_file(
+    bpm:int,
+    track:int,
+    chord_progressions:List[List[MidiChord]]
+):
+    midifle = midi.MIDIFile()
+
+    curr_beat = 0
+    midifle.addTempo(track, curr_beat, bpm)
+
+    for chord_progression in chord_progressions:
+        for chord in chord_progression:
+
+            pitches = [n.midi_value for n in chord.get_notes()]
+
+            for p in pitches:
+                midifle.addNote(
+                    track=0,
+                    channel=0,
+                    pitch=p,
+                    time=curr_beat,
+                    duration=chord.note_duration,
+                    volume=chord.velocity
+                )
+
+    return midifle
