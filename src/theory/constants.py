@@ -24,7 +24,8 @@ midi_piano_end = 108
 midi_vel_low = 0
 midi_vel_high = 127
 
-note_lengths = ["1/16", '1/8','1/4','1/2', '1']
+# note_lengths = ["1/16", '1/8','1/4','1/2', '1']
+note_lengths = [16, 12, 8, 4, 2, 1, 0.5, 0.25]
 
 bpm_range = (60, 200)
 beats_per_measure_range = (2, 8)

@@ -104,11 +104,21 @@ def load_state():
 
 
 def generate_midi_files():
+
     midi_obj = get_midi_object_from_progression(
         bpm=st.session_state.time_settings[0],
         track=0,
         chord_progressions=st.session_state.midi_instr
     )
 
-    with open(st.session_state.dest, "wb") as f:
-        midi_obj.writeFile(f)
+    if os.path.exists(st.session_state.dest):
+        os.remove(st.session_state.dest)
+
+    try:
+        with open(st.session_state.dest, "wb") as f:
+            midi_obj.writeFile(f)
+
+        st.success(f"{st.session_state.dest} Created")
+    
+    except Exception as e:
+        st.error("Error creating the midi file.")

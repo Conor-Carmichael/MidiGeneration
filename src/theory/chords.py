@@ -5,6 +5,7 @@ from src.theory.constants import ChordFormulas, ChordSymbols, ChordType
 from src.theory.scales import Scale, ScaleFactory, find_scale_factory_for_mode
 from src.utils.utils import cycle_n_times
 
+from numpy import log2
 
 class Chord(NoteSequence):
     """
@@ -66,6 +67,15 @@ class Chord(NoteSequence):
             raise NotImplementedError("altered_notes for chord")
             self.set_altered_notes(notes)
 
+    def __repr__(self) -> str:
+        # TODO Set up to be ready for writeline to midi file
+        s = f"Chord Name: {self.__str__()}\n"
+        for n in self.notes:
+            s += "\t"+repr(n)+"\n"
+
+        return s
+        
+
     def __str__(self) -> str:
         symb = (
             ChordSymbols[self.type][1]
@@ -90,7 +100,7 @@ class Chord(NoteSequence):
             s += " " + ext_str
 
         if self.slash_value:
-            s += " / " + self.slash_value
+            s += " / " + self.slash_value.name
         elif self.inversion > 0:
             s += f" / {self.notes[0]}"
         # if self.extensions:
@@ -136,68 +146,27 @@ class Chord(NoteSequence):
         return all([note in scale for note in self.notes])
 
 
-class MidiChord(Chord):
-    def __init__(
-        self, start_time: int, arpeggiated:bool, note_duration: int, velocity: int, pitch:int, *args, **kwargs
-    ) -> None:
-        self.start_time = start_time
-        self.note_duration = note_duration
-        self.arpeggiated = arpeggiated
-        self.velocity = velocity
-        self.pitch = pitch
-        super(MidiChord, self).__init__(*args, **kwargs)
-
-
-    @classmethod
-    def get_from_chord(
-        cls, start_time: int, note_duration: int, arpeggiated:bool, velocity: int, pitch:int, chord: Chord
-    ) -> object:
-
-        return MidiChord(
-            start_time=start_time,
-            note_duration=note_duration,
-            velocity=velocity,
-            arpeggiated=arpeggiated,
-            pitch=pitch,
-            root=chord.root,
-            type=chord.type,
-            slash_value=chord.slash_value,
-            inversion=chord.inversion,
-            extensions=chord.extensions,
-            altered_notes=chord.altered_notes,
-            notes = chord.notes
-        )
-
-    def __repr__(self) -> str:
-        # TODO Set up to be ready for writeline to midi file
-
-
-        return super().__repr__()
-
-
 def get_midi_object_from_progression(
     bpm:int,
     track:int,
     chord_progressions:List[List[Chord]]
-) -> midi.MIDIFile :
+) -> midi.MIDIFile:
 
-    midifle = midi.MIDIFile()
+    midifle = midi.MIDIFile(numTracks=1, )
     curr_beat = 0
-    midifle.addTempo(track, curr_beat, bpm)
+    midifle.addTempo(track=track, time=0, tempo=bpm)
   
     for chord_progression in chord_progressions:
-
         for chord_midi_dict in chord_progression:
-            # print
+
             chord = chord_midi_dict['chord']
-            print("\n\n")
-            print("CHORD BEFoRE: ", [ c.__repr__() for c in chord.get_notes()])
             midi_instr = chord_midi_dict['midi']
             
             chord.conv_generic_notes_to_midi_notes(
                 **midi_instr
             )
-            print("CHORD AFTER: ", [ c.__repr__() for c in chord.get_notes()])
+            
+            print(repr(chord))
 
             for note in chord.get_notes():
                 midifle.addNote(
@@ -207,6 +176,7 @@ def get_midi_object_from_progression(
                     time=curr_beat,
                     duration=note.duration,
                     volume=note.velocity
-                    )
+                )
+            curr_beat += note.duration
 
     return midifle

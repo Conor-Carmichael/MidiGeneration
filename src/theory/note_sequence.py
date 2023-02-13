@@ -95,8 +95,18 @@ class NoteSequence:
     ) -> None:
         
         new_notes = []
+
         for note in self.notes:
-            midi_value = (octave * len(self._note_strings)) + self._note_strings.index(note.name)
+            try:
+                midi_value = (octave * len(self._note_strings)) + self._note_strings.index(note.name)
+            except:
+                print("\n\nDEBUG\n")
+                print("Name:", self.name)
+                print("Type:",type(note))
+                print("note:",note)
+                print("dir:",dir(note))
+                print("self.__str__: ", self.__str__())   
+
             new_notes.append(Note(
                 midi_value=midi_value,
                 duration=note_duration,
@@ -164,7 +174,7 @@ class NotesFactory:
 
             prev_note = note
 
-        prev_note.next_note = note
+        prev_note.next_note = notes[0]
         notes[0].prev_note = note  # make circular
 
         return NoteSequence(notes=notes, name="Generic Notes")

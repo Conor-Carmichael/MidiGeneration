@@ -92,4 +92,4 @@ class Note(NoteGeneric):
 
 
     def __repr__(self) -> str:
-        return f"{self.name} -> {self.midi_value} (Vel:{self.velocity}, Dur:{self.duration}, T:{self.start_time})"
+        return f"{self.name}={self.midi_value} (Vel:{self.velocity}, Dur:{self.duration}, T:{self.start_time})"
