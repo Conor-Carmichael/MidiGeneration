@@ -132,12 +132,13 @@ def project_settings_form(container: st.container):
         cols = st.columns(3)
         bpm = cols[0].slider("BPM", bpm_range[0], bpm_range[1])
         beats_per_measure = cols[1].number_input(
-            "Beats per measure (time sig numerator)", *beats_per_measure_range, value=4
+            "Beats per measure (time sig numerator)", *beats_per_measure_range, value=4, disabled=True
         )
         note_duration_per_beat = cols[2].number_input(
             "Note duration per beat (time sig denominator)",
             *note_duration_per_beat_range,
             value=4,
+            disabled=True
         )
 
     return bpm, beats_per_measure, note_duration_per_beat
