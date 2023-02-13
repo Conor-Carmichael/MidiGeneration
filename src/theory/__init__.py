@@ -1,9 +1,22 @@
-from typing import *
+import src.settings as S
+
 from src.theory.constants import *
 from src.theory.datatypes import *
-import midiutil as midi
-
 from src.theory.notes import Note, NoteGeneric
 from src.theory.note_sequence import NoteSequence, NotesFactory
 from src.theory.scales import Scale, ScaleFactory, AllScaleFactories
 from src.theory.chords import Chord, get_midi_object_from_progression
+
+from typing import *
+from sys import stdout
+import midiutil as midi
+
+import logging
+
+logger = logging.getLogger(__name__)
+output_hndlr = logging.StreamHandler(stdout)
+logger.addHandler(output_hndlr)
+# handler = logging.StreamHandler()
+
+level = logging.getLevelName(S.log_level)
+logger.setLevel(level)
