@@ -30,13 +30,11 @@ for prog_idx, chord_prog in enumerate(st.session_state.all_progressions):
 
         for chord_idx, chord in enumerate(chord_prog):
             chord_midi_settings = chord_midi_form(chord, chord_idx, prog_idx)
-
-            if chord_midi_settings['random_velocity']:
-                chord_midi_settings['velocity'] = randint(midi_vel_low, midi_vel_high)
-            del chord_midi_settings['random_velocity']
-            # TODO work in arpeggiation
-            del chord_midi_settings['arpeggiated']
+            
             chord_midi_settings["start_time"] = "00:00:00.00"
+            chord.add_midi_info(chord_midi_settings)
+
+        
             midi_ready_prog.append({"chord": chord, "midi": chord_midi_settings})
 
     st.session_state.midi_instr.append(midi_ready_prog*repeat_prog_n)

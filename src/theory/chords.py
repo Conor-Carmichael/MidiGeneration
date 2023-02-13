@@ -4,6 +4,7 @@ from src.theory.notes import Note, NoteGeneric
 from src.theory.constants import ChordFormulas, ChordSymbols, ChordType
 from src.theory.scales import Scale, ScaleFactory, find_scale_factory_for_mode
 from src.utils.utils import cycle_n_times
+from random import randint
 
 from numpy import log2
 
@@ -146,15 +147,36 @@ class Chord(NoteSequence):
         return all([note in scale for note in self.notes])
 
 
+    def add_midi_info(self, midi_instructions:dict) -> None:
+
+        assert all([ midi_instructions.get(k, False) for k in ['start_time','note_duration','velocity','octave']]) , "Cannot set midi info without prerequisite info."
+
+        # If velocity is checked off to be random, calculate it, then delete from dict
+        # so it can be dumped in as args
+        if midi_instructions['random_velocity']:
+            midi_instructions['velocity'] = randint(midi_vel_low, midi_vel_high)
+        del midi_instructions['random_velocity']
+        
+        # TODO work in arpeggiation. For now just delete before passing as args
+        del midi_instructions['arpeggiated']
+
+        # Use super class function to, for each note in chord, calculate the midi
+        # value of the note, and collecte the midi information and tie it to each note.
+        # Converts notes from 'NoteGeneric' to 'Note' (if they are not already)
+        self.conv_generic_notes_to_midi_notes(
+            **midi_instructions
+        )
+
+        ...
+
+
 def get_midi_object_from_progression(
     bpm:int,
     track:int,
     chord_progressions:List[List[Chord]]
 ) -> midi.MIDIFile:
 
-    midifle = midi.MIDIFile(numTracks=1, )
-    curr_beat = 0
-    midifle.addTempo(track=track, time=0, tempo=bpm)
+
   
     for chord_progression in chord_progressions:
         for chord_midi_dict in chord_progression:
@@ -166,7 +188,7 @@ def get_midi_object_from_progression(
                 **midi_instr
             )
             
-            print(repr(chord))
+            logging.info(repr(chord))
 
             for note in chord.get_notes():
                 midifle.addNote(

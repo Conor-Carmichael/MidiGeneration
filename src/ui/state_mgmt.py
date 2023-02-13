@@ -12,7 +12,7 @@ from src.theory import *
 # * Generic: by numeral
 # * Diatonic: only show diatonic chords
 input_help_str = "Choose how to enter chords. Freely select any chords, choose by numerals, or choose from diatonic chords."
-input_methods = ["Free", "Generic", "Diatonic"]
+input_methods = ["Free", "Generic", "Diatonic", "Text"]
 save_dir = os.path.join(os.getcwd(), "midi_values")
 
 
@@ -41,10 +41,10 @@ def dev_set_state(state: dict):
 
 
 def disp_state():
-    print("\n\n\n", "*" * 15, " Reload ", "*" * 15, "\n\n")
-    print(f"State Vars")
+    logging.info("Current state of application.")
+
     for k, v in st.session_state.items():
-        print(f"{k} : {v}")
+        logging.info(f"{k} : {v}")
 
 
 def remove_empty():
@@ -75,6 +75,7 @@ def add_curr_to_total():
 
 
 def save_state():
+    raise NotImplementedError
     try:
         with open(state_file, 'wb') as f:
             ss = dict(st.session_state)
@@ -88,6 +89,7 @@ def save_state():
 
 
 def load_state():
+    raise NotImplementedError
     try:
         with open(state_file, 'rb') as f:
             data = load(f)
