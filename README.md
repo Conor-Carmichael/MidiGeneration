@@ -4,7 +4,8 @@ With this tool, I aim to provide an interface for creating midi files to use as 
 
 Quickly enter the chords, progression by progresssion. Set the midi instructions (loudness, duration, etc), then download your midi file. At this point, you can drag and drop it into your editor (tested with Logic and Garageband).
 
-There are more features coming soon, primarily in streamlining the input. 
+## Features coming soon
+... primarily in streamlining the input. 
 
 * Generic chord progressions:
     * Input based on scale degree, chord quality, and alterations. Choose the scale later.
@@ -16,7 +17,10 @@ There are more features coming soon, primarily in streamlining the input.
 * Command line interface:
     * Download the code, and use text input methods locally via command line
 
-
+## Longer term
+* Turn the logic behind this into a pip package
+* Generators
+    * Informed generation of progressions
 
 
 ## Details of Implementation
