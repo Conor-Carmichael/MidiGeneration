@@ -14,25 +14,17 @@ notes_list = NotesFactory.get_generic_notes()
 
 
 def set_sidebar(homepage: bool = True):
-    st.sidebar.button("Load State", on_click=load_state, disabled=True, key=f"load_state_{homepage}")
-    st.sidebar.button("Save State", on_click=save_state, disabled=True, key=f"save_state_{homepage}")
+    st.sidebar.button(
+        "Load State", on_click=load_state, disabled=True, key=f"load_state_{homepage}"
+    )
+    st.sidebar.button(
+        "Save State", on_click=save_state, disabled=True, key=f"save_state_{homepage}"
+    )
 
     if homepage:
         st.sidebar.header("Configure App Usage")
         st.session_state.input_method = st.sidebar.radio(
             "Input method", options=input_methods, help=input_help_str, disabled=True
-        )
-    else:
-        st.sidebar.header("Configure MIDI File")
-        st.session_state.dest = os.path.join(
-            st.sidebar.text_input(
-                "Destination", value=os.path.join(os.getcwd(), "midi_files")
-            ),
-            st.sidebar.text_input("Midi File Name", value="midi_notes") + ".mid",
-        )
-        st.session_state.create_bass_track = st.sidebar.checkbox("Create separate bass note track", value=False, key="bass_note_track")
-        st.sidebar.button(
-            ".  . ...---== Create Midi File ==---... .  .", on_click=generate_midi_files
         )
 
 
@@ -112,7 +104,8 @@ def chord_input_form(container: st.container) -> None:
 
 
 def set_chord_from_args(root, ct, slash, inv, ext, alters):
-    # TODO Shouldnt be messing with state variable here. move to other file.
+    # TODO Shouldnt be messing with state variable in display code 
+    # but wasnt working on first attempt to change
     root = NoteGeneric(name=root)
     chord = Chord(root, ct, slash, inv, ext, alters)
     add_chord_to_prog(chord)
@@ -121,14 +114,11 @@ def set_chord_from_args(root, ct, slash, inv, ext, alters):
 
 
 def display_song(container: st.container, song: Song, curr_prog: ChordProgression):
-    # Show the current song
+    # Show the current song: Iteratively display chord progs
     if not song.is_empty():
         with container:
             for sect_idx, section in enumerate(song):
                 st.markdown(f"<h5>{str(section)}</h5>", unsafe_allow_html=True)
-
-    else:
-        st.markdown("No progressions", unsafe_allow_html=True)
 
     # Now show the current
     if not curr_prog.is_empty():
@@ -136,7 +126,7 @@ def display_song(container: st.container, song: Song, curr_prog: ChordProgressio
             st.markdown(f"<h5>{str(curr_prog)}</h5>", unsafe_allow_html=True)
 
     else:
-        st.markdown("No current progression", unsafe_allow_html=True)
+        st.markdown("Start adding chords", unsafe_allow_html=True)
 
 
 def set_time_signature(container: st.container):
@@ -190,7 +180,7 @@ def chord_midi_form(chord: Chord, chord_idx: int, prog_idx: int):
     note_duration = cols[3].select_slider(
         "Note Length (in beats)",
         note_lengths,
-        value=note_lengths[2],
+        value=note_lengths[4],
         key="note_duration." + key,
     )
 
@@ -201,3 +191,26 @@ def chord_midi_form(chord: Chord, chord_idx: int, prog_idx: int):
         "octave": octave,
         "note_duration": note_duration,
     }
+
+
+def generate_track_form(container: st.container) -> None:
+    with container:
+            
+        st.header("Generate MIDI File")
+        st.session_state.file_name = (
+            st.text_input("Midi File Name", value="midi_notes") + ".mid"
+        )
+
+        st.session_state.create_bass_track = st.checkbox(
+            "Create separate bass note track",
+            value=False,
+            help="Take the bass note of each chord, and add it to a separate track.",
+        )
+        cols = st.columns(2)
+        result = cols[0].button("Generate MIDI File", on_click=generate_midi_files)
+        download_button_empty = cols[1].empty()
+        
+        if result:
+            st.success("MIDI created successfully")
+            with open(st.session_state.file_name, 'rb') as f:
+                download_button_empty.download_button("Download File", f, file_name=st.session_state.file_name)

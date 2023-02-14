@@ -43,3 +43,5 @@ if not st.session_state.song.is_empty():
 
 else:
     st.header("Nothing yet..")
+
+generate_track_form(st.container())

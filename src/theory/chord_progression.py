@@ -188,7 +188,5 @@ class Song:
             # TODO remove hard coding of the track number
             self._write_bass_track(midi_file_writer, 1)
 
-
-
         with open(dest, 'wb') as file:
             midi_file_writer.writeFile(file)

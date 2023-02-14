@@ -114,11 +114,18 @@ def load_state():
 
 
 def generate_midi_files():
+    success = False
+    try:
+        if os.path.exists(st.session_state.dest):
+            os.remove(st.session_state.dest)
 
-    if os.path.exists(st.session_state.dest):
-        os.remove(st.session_state.dest)
+        st.session_state.song.write_song_to_midi(
+            st.session_state.file_name,
+            st.session_state.create_bass_track
+        )
+        success = True
+    except Exception as E:
+        success = False
+    finally:
 
-    st.session_state.song.write_song_to_midi(
-        st.session_state.dest,
-        st.session_state.create_bass_track
-    )
+        return success
