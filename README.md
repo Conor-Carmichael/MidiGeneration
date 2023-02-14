@@ -1,15 +1,20 @@
 # Music Generation Tools
 
+With this tool, I aim to provide an interface for creating midi files to use as the starting point for music projects. If you want to loop some chords quickly to jam over, came up with a progression on your guitar, or want to share either to someone else in an easy way, this application can help. 
 
-The goal of the project is to be able to quickly generate midi files to use in logic, or however. The midi files should be able to generate chord progressions, bass lines, etc. from simple inputs. Take in BPM, chords or roman numerals and a key, consider slash chords and inversions, allow for arpegiattion, note duration, secondary fifths... so on and so forth. 
+Quickly enter the chords, progression by progresssion. Set the midi instructions (loudness, duration, etc), then download your midi file. At this point, you can drag and drop it into your editor (tested with Logic and Garageband).
 
-The inputs are to be determined, but plans are for a streamlit user interface, and a command line interface. For CLI, something like:
+There are more features coming soon, primarily in streamlining the input. 
 
-`$python generate_chord_progression.py C MAJOR 85 I:w IV:w V:h vi:h iv:h 3x`
+* Generic chord progressions:
+    * Input based on scale degree, chord quality, and alterations. Choose the scale later.
+* Restricted input:
+    * Restrict the chords you can choose from, to only diatonic chords (chords which all notes exist naturally within a given scale)
+* Text input: 
+    * Type your input, "c major add 9" then press enter, and type your next chord...
 
-*Would indicate* In the key of C major, at 85 beats per minute, generate a chord progression that plays; C major whole notes, F major whole notes, G major half notes, Am half notes, Fm half notes. Played three times.
-
-`$python generate_chord_progression.py {root note} {scale} {bpm} {chord:duration:velocity for chord in progression} {repetitions}`
+* Command line interface:
+    * Download the code, and use text input methods locally via command line
 
 
 
@@ -19,20 +24,16 @@ The inputs are to be determined, but plans are for a streamlit user interface, a
 ```
 src
 |
-|-generators "To generate progressions etc."
+|-generators "To auto generate progressions etc. TODO"
 |
 |-theory "Implementation of music theory principles"
 |
-|-ui "Drivers for user interface"
+|-ui "Streamlit user interface"
 |
-|-cli "Drivers for command line interface"
+|-cli "Drivers for command line interface. TODO"
 |
 |-tests "All unit and e2e testing"
 ```
 
-### Theory
 
-* Factories
-
-* Inheritance pattern
-.. to be written
+*Implementation details to be written soon*
