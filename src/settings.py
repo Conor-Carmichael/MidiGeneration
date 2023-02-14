@@ -1,9 +1,11 @@
 from os import getenv
+import os
 from dotenv import load_dotenv
 
 
 load_dotenv()
 
+os.environ("PYTHONPATH", "$(PWD)")
 
 project_name = "MusicBase"
 
