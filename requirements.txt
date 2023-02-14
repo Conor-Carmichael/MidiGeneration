@@ -3,7 +3,3 @@ numpy
 black
 streamlit
 python-dotenv
-enum
-abc
-pytext
-dataclasses
