@@ -27,6 +27,7 @@ midi_vel_high = 127
 # note_lengths = ["1/16", '1/8','1/4','1/2', '1']
 note_lengths = [16, 12, 8, 4, 2, 1, 0.5, 0.25]
 
+default_bpm = 120
 bpm_range = (60, 200)
 beats_per_measure_range = (2, 8)
 note_duration_per_beat_range = (2, 8)
@@ -133,7 +134,7 @@ IonianChordFormulas = [
 ]
 
 ChordSymbols = {
-    # First is for triad, second is for extended 
+    # First is for triad, second is for extended
     ChordType.MAJOR: ["", "maj"],
     ChordType.MINOR: ["m", "min"],
     ChordType.MAJOR6TH: ["6", "maj6"],

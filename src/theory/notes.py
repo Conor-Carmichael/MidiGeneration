@@ -36,7 +36,7 @@ class NoteGeneric:
     def sharpen(self, keep_base_note_name: bool):
         """
         Does not change base note name if not requested, just adds sharp.
-        Sometimes it is more proper to have a Bbb rather than A. 
+        Sometimes it is more proper to have a Bbb rather than A.
         """
         if keep_base_note_name:
             self.name += SHARP
@@ -49,7 +49,7 @@ class NoteGeneric:
     def flatten(self, keep_base_note_name: bool):
         """
         Does not change base note name if not requested, just adds flat.
-        Sometimes it is more proper to have a Bbb rather than A. 
+        Sometimes it is more proper to have a Bbb rather than A.
         """
         if keep_base_note_name:
             self.alter += FLAT
@@ -62,6 +62,7 @@ class NoteGeneric:
     def __repr__(self) -> str:
         return f"{self.name}"
 
+
 class Note(NoteGeneric):
 
     """
@@ -69,13 +70,23 @@ class Note(NoteGeneric):
     Holds pitch, velocity, duration, start time, midi value for the note.
     """
 
-    def __init__(self, midi_value: int, duration:int, velocity:int, start_time:any, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        midi_value: int,
+        duration: int,
+        velocity: int,
+        start_time: any,
+        *args,
+        **kwargs,
+    ) -> None:
         super(Note, self).__init__(*args, **kwargs)
         self.midi_value = midi_value
         self.duration = duration
         self.velocity = velocity
         self.start_time = start_time
-        assert midi_start_val < self.midi_value < midi_end_val , f"MIDI value is out of range for {self.name} with value of {self.midi_value}"
+        assert (
+            midi_start_val < self.midi_value < midi_end_val
+        ), f"MIDI value is out of range for {self.name} with value of {self.midi_value}"
         self.pitch = get_pitch_from_midi_value(self.midi_value)
 
     def __eq__(self, __o: object) -> bool:
@@ -86,8 +97,8 @@ class Note(NoteGeneric):
 
     def change_name_notation(self, new_base_note: str, new_alter: str) -> None:
         """
-        Sometimes it is more proper to have a Bbb rather than A. 
-        If the name needs to be changed to A though this fn does so        
+        Sometimes it is more proper to have a Bbb rather than A.
+        If the name needs to be changed to A though this fn does so
         """
         self.base_note_name = new_base_note
         self.alter = new_alter
@@ -102,7 +113,6 @@ class Note(NoteGeneric):
         """Does not change base note name if not requested, just adds flat to the str"""
         super().flatten(keep_base_note_name)
         self.pitch = self.pitch * np.power(2, -1 * (1 / 12))
-
 
     def __repr__(self) -> str:
         return f"{self.name}={self.midi_value} (Vel:{self.velocity}, Dur:{self.duration}, T:{self.start_time})"

@@ -8,6 +8,19 @@ from random import randint
 
 from numpy import log2
 
+
+class ChordGeneric(NoteSequence):
+
+    """Holds information to form a chord later when scale root is determined."""
+
+    def __init__(
+        self,
+        degree: int,
+        type: ChordType,
+    ) -> None:
+        ...
+
+
 class Chord(NoteSequence):
     """
     Class for chord objects, built from a root note, and
@@ -56,11 +69,11 @@ class Chord(NoteSequence):
             raise ValueError("Cannot invert a slash chord.")
 
         self.formula = ChordFormulas.get(self.type, None)
-        if kwargs.get('notes', None) is None:
-            notes = self._set_notes() 
+        if kwargs.get("notes", None) is None:
+            notes = self._set_notes()
         else:
-            notes = kwargs['notes']
-            del kwargs['notes']
+            notes = kwargs["notes"]
+            del kwargs["notes"]
 
         super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
 
@@ -72,10 +85,9 @@ class Chord(NoteSequence):
         # TODO Set up to be ready for writeline to midi file
         s = f"Chord Name: {self.__str__()}\n"
         for n in self.notes:
-            s += "\t"+repr(n)+"\n"
+            s += "\t" + repr(n) + "\n"
 
         return s
-        
 
     def __str__(self) -> str:
         symb = (
@@ -139,66 +151,33 @@ class Chord(NoteSequence):
 
         return notes
 
-    def conv_notes_to_midi(self, octave:int) -> None:
-        self.notes = [ Note.get_from_generic(octave=octave, note=note) for note in self.notes ]
+    def conv_notes_to_midi(self, octave: int) -> None:
+        self.notes = [
+            Note.get_from_generic(octave=octave, note=note) for note in self.notes
+        ]
 
     def is_diatonic(self, scale: Scale) -> bool:
         """Checks if this chord is diatonic in the given scale"""
         return all([note in scale for note in self.notes])
 
-
-    def add_midi_info(self, midi_instructions:dict) -> None:
-
-        assert all([ midi_instructions.get(k, False) for k in ['start_time','note_duration','velocity','octave']]) , "Cannot set midi info without prerequisite info."
+    def add_midi_info(self, midi_instructions: dict) -> None:
+        assert all(
+            [
+                midi_instructions.get(k, False)
+                for k in ["start_time", "note_duration", "velocity", "octave"]
+            ]
+        ), "Cannot set midi info without prerequisite info."
 
         # If velocity is checked off to be random, calculate it, then delete from dict
         # so it can be dumped in as args
-        if midi_instructions['random_velocity']:
-            midi_instructions['velocity'] = randint(midi_vel_low, midi_vel_high)
-        del midi_instructions['random_velocity']
-        
+        if midi_instructions["random_velocity"]:
+            midi_instructions["velocity"] = randint(midi_vel_low, midi_vel_high)
+        del midi_instructions["random_velocity"]
+
         # TODO work in arpeggiation. For now just delete before passing as args
-        del midi_instructions['arpeggiated']
+        del midi_instructions["arpeggiated"]
 
         # Use super class function to, for each note in chord, calculate the midi
         # value of the note, and collecte the midi information and tie it to each note.
         # Converts notes from 'NoteGeneric' to 'Note' (if they are not already)
-        self.conv_generic_notes_to_midi_notes(
-            **midi_instructions
-        )
-
-        ...
-
-
-def get_midi_object_from_progression(
-    bpm:int,
-    track:int,
-    chord_progressions:List[List[Chord]]
-) -> midi.MIDIFile:
-
-
-  
-    for chord_progression in chord_progressions:
-        for chord_midi_dict in chord_progression:
-
-            chord = chord_midi_dict['chord']
-            midi_instr = chord_midi_dict['midi']
-            
-            chord.conv_generic_notes_to_midi_notes(
-                **midi_instr
-            )
-            
-            logging.info(repr(chord))
-
-            for note in chord.get_notes():
-                midifle.addNote(
-                    track=track,
-                    channel=0,
-                    pitch=note.midi_value,
-                    time=curr_beat,
-                    duration=note.duration,
-                    volume=note.velocity
-                )
-            curr_beat += note.duration
-
-    return midifle
+        self.conv_generic_notes_to_midi_notes(**midi_instructions)

@@ -42,7 +42,7 @@ class NoteSequence:
 
     def set_altered_notes(self, notes) -> None:
         """
-        For each note alteration instrcution, find the degree in 
+        For each note alteration instrcution, find the degree in
         the set of notes and adjust it
         """
         assert len(self.altered_notes) < 7, "Cannot alter seven notes"
@@ -87,7 +87,6 @@ class NoteSequence:
         except AttributeError as ae:
             raise AttributeError("Pitch values are not set on this NoteSequence")
 
-
     def get_name(self) -> str:
         """Returns the name of the note sequence"""
         return self.name.title()
@@ -102,33 +101,34 @@ class NoteSequence:
         except AttributeError as ae:
             raise AttributeError("Midi values are not set on this NoteSequence")
 
-
     def get_notes(self) -> List[Note]:
         """Return the notes of this sequence"""
         return self.notes
 
     def conv_generic_notes_to_midi_notes(
-        self, start_time: int, note_duration: int, velocity: int, octave:int
+        self, start_time: int, note_duration: int, velocity: int, octave: int
     ) -> None:
-        """Converts the Notes in this sequence (which may be NoteGeneric) to Note, containing 
-        the relevant midi information. 
+        """Converts the Notes in this sequence (which may be NoteGeneric) to Note, containing
+        the relevant midi information.
 
         Args:
             start_time (int): Not Implemented Yet! But will be the start time for the note to sound
                 * Note start time is currently dynamically calculated. So it is set to whatever the
                 next beat to play on is, based on all the prior chords in progression.
-            note_duration (int): Length (in beats) to play the note. 
+            note_duration (int): Length (in beats) to play the note.
             velocity (int): Loudness of note, per midi format
-            octave (int): Which octave to sound the note in. 
+            octave (int): Which octave to sound the note in.
         """
-        
+
         # Holds the new note objects to set all at end
         new_notes = []
 
         for note in self.notes:
             # For each note, calc the midi value for it
-            midi_value = (octave * len(self._note_strings)) + self._note_strings.index(note.name)
-            
+            midi_value = (octave * len(self._note_strings)) + self._note_strings.index(
+                note.name
+            )
+
             new_notes.append(
                 Note(
                     midi_value=midi_value,
@@ -137,7 +137,7 @@ class NoteSequence:
                     start_time=start_time,
                     name=note.name,
                     next_note=note.next_note,
-                    prev_note=note.prev_note
+                    prev_note=note.prev_note,
                 )
             )
         # Set the cls variable to overwrite the old (potentially) NoteGeneric
@@ -145,9 +145,10 @@ class NoteSequence:
 
 
 class NotesFactory:
-    """Class to generate a set of Note objects. 
+    """Class to generate a set of Note objects.
     Either midi info containing notes, or generic notesss
     """
+
     def __init__(self) -> None:
         pass
 

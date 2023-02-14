@@ -1,41 +1,45 @@
 from src.theory import *
-from src.ui.Progressions import display_current_chords
+from src.ui.Progressions import display_song
 from src.ui.state_mgmt import *
 from src.ui.display import *
 import streamlit as st
 from random import randint
 
+check_and_init_state() # Checks for missing state variables and initializes
 
-set_chords_cont = st.container()
-time_sig_cont = st.container()
+st.title("Configure MIDI Instrucions")
 
-check_and_init_state()
-
-add_curr_to_total()
+# If there is a current progresssion not yet added to the song
+if not st.session_state.current_progression.is_empty():
+    start_next_progression()
 
 
 # Start display code
+set_sidebar(homepage=False)
 
-set_sidebar()
-st.session_state.time_settings = project_settings_form(time_sig_cont)
+time_sig_cont = st.container()
+st.session_state.time_settings = set_time_signature(time_sig_cont)
 
-st.session_state.midi_instr = []
-loops = st.number_input("Repeat All", min_value=1, value=1)
-for prog_idx, chord_prog in enumerate(st.session_state.all_progressions):
-    prog_container = st.expander(f"Progression {prog_idx+1}", expanded=True)
-    midi_ready_prog = []
-    with prog_container:
+if not st.session_state.song.is_empty():
+    st.session_state.song.full_loops = st.number_input("Repeat All", min_value=1, value=1)
 
-        repeat_prog_n = st.number_input(f"Progression {prog_idx+1} repeats", min_value=1, value=1, key=f"progression_{prog_idx}")
+    for prog_idx, section in enumerate(st.session_state.song):
+        prog_container = st.expander(f"Progression {prog_idx+1}", expanded=True)
+        midi_ready_prog = []
 
-        for chord_idx, chord in enumerate(chord_prog):
-            chord_midi_settings = chord_midi_form(chord, chord_idx, prog_idx)
-            
-            chord_midi_settings["start_time"] = "00:00:00.00"
-            chord.add_midi_info(chord_midi_settings)
+        with prog_container:
+            section.repeats = st.number_input(
+                f"Progression {prog_idx+1} repeats",
+                min_value=1,
+                value=1,
+                key=f"progression_{prog_idx}",
+            )
 
-        
-            midi_ready_prog.append({"chord": chord, "midi": chord_midi_settings})
+            for chord_idx, chord in enumerate(section):
+                chord_midi_settings = chord_midi_form(chord, chord_idx, prog_idx)
 
-    st.session_state.midi_instr.append(midi_ready_prog*repeat_prog_n)
-st.session_state.midi_instr = st.session_state.midi_instr * loops
+                chord_midi_settings["start_time"] = "00:00:00.00"
+                chord.add_midi_info(chord_midi_settings)
+
+else:
+    st.header("Nothing yet..")
