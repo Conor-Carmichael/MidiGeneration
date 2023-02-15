@@ -31,8 +31,6 @@ chord_disp_container = st.container()
 # ****************************************** #
 #                 Run Display
 # ****************************************** #
-display_state()
-
 set_sidebar()
 display_song(
     chord_disp_container, st.session_state.song, st.session_state.current_progression
@@ -49,6 +47,7 @@ with st.container():
     cols[3].button(
         ":heavy_minus_sign: Clear Current Progression", on_click=clear_progression
     )
+    st.info("When ready, open the sidebar on the left and go to Set Midi", icon="ℹ️")
 
 
 if st.session_state.adding_chord:

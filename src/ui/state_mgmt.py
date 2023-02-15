@@ -27,8 +27,6 @@ def check_and_init_state():
         st.session_state.setting_chord_midi = False
     if not "time_settings" in st.session_state:
         st.session_state.time_settings = (120, 4, 4)
-    if not "midi_instr" in st.session_state:
-        st.session_state.midi_instr = []
     if not "dest" in st.session_state:
         st.session_state.dest = ""
     if not "input_method" in st.session_state:

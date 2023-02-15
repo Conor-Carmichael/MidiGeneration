@@ -33,6 +33,8 @@ li_items = [
     "Input generic chord sequences (by scale degree, and chord type)",
     "Input chords by text",
     "Maybe play the chords back through the pygame audio driver? Unlikely.",
+    "Different time signatures, and utilize time signatures. Currently its \
+        restricted to 4/4 but it isn't utilized. The beats should recommend or push towards adding up to a bar."
     "<b>Let me know if you have ideas!</b>"
 ]   
 st.header("Planned Features")
