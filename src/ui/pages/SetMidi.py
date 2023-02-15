@@ -1,3 +1,13 @@
+"""
+UI for choosing the songs midi configuration
+
+Author: Conor Carmichael
+"""
+import sys, os
+
+sys.path.append(os.getcwd())
+
+
 from src.theory import *
 from src.ui.Progressions import display_song
 from src.ui.state_mgmt import *

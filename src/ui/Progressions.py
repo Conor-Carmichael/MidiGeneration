@@ -3,6 +3,10 @@ Main UI driver for project
 
 Author: Conor Carmichael
 """
+import sys, os
+
+sys.path.append(os.getcwd())
+
 
 from src.theory import *
 from src.settings import dev_mode
