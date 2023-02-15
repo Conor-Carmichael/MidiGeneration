@@ -55,6 +55,9 @@ class ChordProgression:
 
 
 class Song:
+
+    songs = 0
+
     def __init__(
         self,
         sections: List[ChordProgression],
@@ -190,3 +193,5 @@ class Song:
 
         with open(dest, 'wb') as file:
             midi_file_writer.writeFile(file)
+            Song.songs += 1
+            logger.info(f"Song #{Song.songs} written to file in session.")

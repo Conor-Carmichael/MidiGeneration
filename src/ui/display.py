@@ -27,6 +27,13 @@ def set_sidebar(homepage: bool = True):
             "Input method", options=input_methods, help=input_help_str, disabled=True
         )
 
+def display_list(data:List[str]) -> None:
+    display_str = "<ul>"
+    for ele in data:
+        display_str += f"<li>{ele}</li>"
+    display_str += "</ul>"
+    return display_str
+
 
 def fmt_name(name_enum: object) -> str:
     return " ".join(name_enum.name.split("_")).title()
