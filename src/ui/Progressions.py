@@ -33,7 +33,7 @@ chord_disp_container = st.container()
 # ****************************************** #
 set_sidebar()
 display_song(
-    chord_disp_container, st.session_state.song, st.session_state.current_progression
+    chord_disp_container, get_state_val("song"), get_state_val("current_progression")
 )
 
 # Input where all chords shown as option
@@ -42,23 +42,23 @@ with st.container():
 
 
 with st.container():
-    if st.session_state.input_method.upper() == "FREE":
+    if get_state_val("input_method").upper() == "FREE":
         # Handle chord input according to input method
-        if st.session_state.adding_chord:
+        if get_state_val("adding_chord"):
             container = st.container()
             chord_args = free_chord_input_form(container)
             if chord_args:
                 set_chord_from_args(*chord_args)
 
-    elif st.session_state.input_method.upper() == "TEXT":
+    elif get_state_val("input_method").upper() == "TEXT":
         st.markdown("Text input", unsafe_allow_html=True)
 
     else:
         scale_factory, scale_root, scale_mode = scale_selection()
 
-        set_state("scale_type", scale_factory.name)
-        set_state("scale_mode", scale_mode)
-        set_state("scale_root", scale_root)
+        set_state_val("scale_type", scale_factory.name)
+        set_state_val("scale_mode", scale_mode)
+        set_state_val("scale_root", scale_root)
 
         scale_factory = (
             scale_factory.get_mode_definition(mode_name=get_state_val("scale_mode"))
@@ -67,11 +67,11 @@ with st.container():
         )
         scale = scale_factory.generate_scale(root_note=get_state_val("scale_root"))
 
-        if st.session_state.input_method.upper() == "GENERIC":
+        if get_state_val("input_method").upper() == "GENERIC":
             display_list([n.name for n in scale.get_notes()])
 
-            if st.session_state.adding_chord:
+            if get_state_val("adding_chord"):
                 generic_input_form(scale)
 
-        elif st.session_state.input_method.upper() == "DIATONIC":
+        elif get_state_val("input_method").upper() == "DIATONIC":
             st.markdown("Diatonic input", unsafe_allow_html=True)

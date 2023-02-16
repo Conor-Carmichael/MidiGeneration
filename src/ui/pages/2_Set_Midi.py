@@ -20,7 +20,7 @@ check_and_init_state()  # Checks for missing state variables and initializes
 st.title("Configure MIDI Instrucions")
 
 # If there is a current progresssion not yet added to the song
-if not st.session_state.current_progression.is_empty():
+if not get_state_val("current_progression").is_empty():
     start_next_progression()
 
 
@@ -28,14 +28,14 @@ if not st.session_state.current_progression.is_empty():
 set_sidebar(homepage=False)
 
 time_sig_cont = st.container()
-st.session_state.time_settings = set_time_signature(time_sig_cont)
+set_state_val("time_settings", set_time_signature(time_sig_cont))
 
-if not st.session_state.song.is_empty():
-    st.session_state.song.full_loops = st.number_input(
+if not get_state_val("song").is_empty():
+    get_state_val("song").full_loops = st.number_input(
         "Repeat All", min_value=1, value=1
     )
 
-    for prog_idx, section in enumerate(st.session_state.song):
+    for prog_idx, section in enumerate(get_state_val("song")):
         prog_container = st.expander(f"Progression {prog_idx+1}", expanded=True)
         midi_ready_prog = []
 

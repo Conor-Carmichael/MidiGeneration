@@ -27,7 +27,7 @@ type_check_state = {
     "song": [Song],
     "adding_chord": [bool],
     "time_settings": [tuple],
-    "dest": [str],
+    "file_name": [str],
     "input_method": [str],
     "create_bass_track": [bool],
     "scale_type": [ScaleFactory],
@@ -40,7 +40,7 @@ state_value_defaults = {
     "song": Song.empty(),
     "adding_chord": False,
     "time_settings": (120, 4, 4),
-    "dest": "",
+    "file_name": "",
     "input_method": input_methods[0],
     "create_bass_track": False,
     "scale_type": None,
@@ -52,11 +52,11 @@ state_value_defaults = {
 def check_and_init_state():
     for key, default in state_value_defaults.items():
         if not key in st.session_state:
-            set_state(key, default)
+            set_state_val(key, default)
 
 
 # Also i dont like writing st.session_state.---- = ----
-def set_state(k, v):
+def set_state_val(k, v):
     """Only allows state variables in the inialization routine to be set and to the right type"""
     if k in state_value_defaults and k in type_check_state:
         if type(v) in type_check_state.get(k):
@@ -89,31 +89,31 @@ def display_state():
 
 
 def remove_empty():
-    st.session_state.song.remv_empty()
+    get_state_val("song").remv_empty()
 
 
 def clear_progression():
-    st.session_state.current_progression.clear()
+    get_state_val("current_progression").clear()
 
 
 def clear_all_progressions():
-    st.session_state.current_progression = ChordProgression.empty()
-    st.session_state.song = Song.empty()
+    set_state_val("current_progression", ChordProgression.empty())
+    set_state_val("song", Song.empty())
 
 
 def add_chord_to_prog(chord: Chord):
     """Adds chord to sessions current_progression"""
-    st.session_state.current_progression.add_chord(chord)
-    st.session_state.adding_chord = False
+    get_state_val("current_progression").add_chord(chord)
+    set_state_val("adding_chord", False)
 
 
 def start_next_progression():
-    st.session_state.song.add_section(st.session_state.current_progression)
-    st.session_state.current_progression = ChordProgression.empty()
+    get_state_val("song").add_section(get_state_val("current_progression"))
+    set_state_val("current_progression", ChordProgression.empty())
 
 
 def add_curr_to_total():
-    st.session_state.song.add_section(st.session_state.current_progression)
+    get_state_val("song").add_section(get_state_val("current_progression"))
     clear_progression()
     remove_empty()
 
@@ -152,11 +152,11 @@ def load_state():
 def generate_midi_files():
     success = False
     try:
-        if os.path.exists(st.session_state.dest):
-            os.remove(st.session_state.dest)
+        if os.path.exists(get_state_val("file_name")):
+            os.remove(get_state_val("file_name"))
 
-        st.session_state.song.write_song_to_midi(
-            st.session_state.file_name, st.session_state.create_bass_track
+        get_state_val("song").write_song_to_midi(
+            get_state_val("file_name"), get_state_val("create_bass_track")
         )
         success = True
     except Exception as E:

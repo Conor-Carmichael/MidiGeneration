@@ -24,16 +24,19 @@ def set_sidebar(homepage: bool = True):
 
     if homepage:
         st.sidebar.header("Configure App Usage")
-        st.session_state.input_method = st.sidebar.radio(
+        selected = st.sidebar.radio(
             "Input method", options=input_methods, help=input_help_str
         )
+        set_state_val("input_method", selected)
 
 
 def show_progression_controls():
     # Display buttons
     cols = st.columns(4)
     temp = cols[0].button(":heavy_plus_sign: Add Chord")
-    st.session_state.adding_chord = temp if temp else st.session_state.adding_chord
+
+    set_state_val("adding_chord", temp if temp else get_state_val("adding_chord"))
+    
     cols[1].button("Start Next Progression", on_click=start_next_progression)
     cols[2].button("Clear All Progressions", on_click=clear_all_progressions)
     cols[3].button(
@@ -212,16 +215,7 @@ def display_song(container: st.container, song: Song, curr_prog: ChordProgressio
 
 def set_time_signature(container: st.container):
     with container:
-        if st.session_state.input_method == "Generic":
-            cols = st.columns(4)
-            root_note_key = cols[0].select_slider(
-                "Select Root", options=notes_list, format_func=lambda note: note.name
-            )
-            scale_type = cols[0].select_slider(
-                "Select Root", options=notes_list, format_func=lambda note: note.name
-            )
-        else:
-            cols = st.columns(3)
+        cols = st.columns(3)
 
         bpm = cols[0].slider("BPM", bpm_range[0], bpm_range[1], value=120)
         beats_per_measure = cols[1].number_input(
@@ -277,22 +271,25 @@ def chord_midi_form(chord: Chord, chord_idx: int, prog_idx: int):
 def generate_track_form(container: st.container) -> None:
     with container:
         st.header("Generate MIDI File")
-        st.session_state.file_name = (
+        set_state_val("file_name",
             st.text_input("Midi File Name", value="midi_notes") + ".mid"
         )
 
-        st.session_state.create_bass_track = st.checkbox(
-            "Create separate bass note track",
-            value=False,
-            help="Take the bass note of each chord, and add it to a separate track.",
+        set_state_val("create_bass_track",
+            st.checkbox(
+                "Create separate bass note track",
+                value=False,
+                help="Take the bass note of each chord, and add it to a separate track.",
+            )
         )
+
         cols = st.columns(2)
         result = cols[0].button("Generate MIDI File", on_click=generate_midi_files)
         download_button_empty = cols[1].empty()
 
         if result:
             st.success("MIDI created successfully")
-            with open(st.session_state.file_name, "rb") as f:
+            with open(get_state_val("file_name"), "rb") as f:
                 download_button_empty.download_button(
-                    "Download File", f, file_name=st.session_state.file_name
+                    "Download File", f, file_name=get_state_val("file_name")
                 )
