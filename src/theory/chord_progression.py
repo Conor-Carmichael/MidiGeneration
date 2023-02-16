@@ -1,6 +1,7 @@
 from src.theory import *
 import midiutil
 
+
 class ChordProgression:
     def __init__(
         self, chords: List[Chord], repeats: int, track: int, channel: int = 0
@@ -55,7 +56,6 @@ class ChordProgression:
 
 
 class Song:
-
     songs = 0
 
     def __init__(
@@ -121,7 +121,9 @@ class Song:
             self.curr_sect = 0
             raise StopIteration
 
-    def _write_bass_track(self, midi_file_writer:midiutil.MIDIFile, track:int) -> None:
+    def _write_bass_track(
+        self, midi_file_writer: midiutil.MIDIFile, track: int
+    ) -> None:
         """pretty much a copy of write_song_to_midi but only does the first note for a chord.
         Should rework for better code utilization.
 
@@ -133,13 +135,14 @@ class Song:
         full_song_write_count = 0
 
         while full_song_write_count < self.full_loops:
-                
             for sect in self.sections:
-                midi_file_writer.addTempo(track=sect.track, time=curr_beat, tempo=self.bpm)
+                midi_file_writer.addTempo(
+                    track=sect.track, time=curr_beat, tempo=self.bpm
+                )
                 section_write_count = 0
                 while section_write_count < sect.repeats:
                     for chord in sect.chords:
-                        note =  chord.get_notes()[0]
+                        note = chord.get_notes()[0]
                         midi_file_writer.addNote(
                             track=track,
                             channel=0,
@@ -148,16 +151,16 @@ class Song:
                             duration=note.duration,
                             volume=note.velocity,
                         )
-                    
+
                         curr_beat += note.duration
-        
-                    section_write_count += 1 # Increment counter to repeat sections
-                
+
+                    section_write_count += 1  # Increment counter to repeat sections
+
             full_song_write_count += 1
 
-    def write_song_to_midi(self, dest: str, create_bass_track:bool):
+    def write_song_to_midi(self, dest: str, create_bass_track: bool):
         if create_bass_track:
-            self.set_num_tracks(self.num_tracks+1)
+            self.set_num_tracks(self.num_tracks + 1)
 
         midi_file_writer = midiutil.MIDIFile(numTracks=self.num_tracks)
         curr_beat = self.starting_beat
@@ -165,9 +168,10 @@ class Song:
         full_song_write_count = 0
 
         while full_song_write_count < self.full_loops:
-                
             for sect in self.sections:
-                midi_file_writer.addTempo(track=sect.track, time=curr_beat, tempo=self.bpm)
+                midi_file_writer.addTempo(
+                    track=sect.track, time=curr_beat, tempo=self.bpm
+                )
                 section_write_count = 0
                 while section_write_count < sect.repeats:
                     for chord in sect.chords:
@@ -180,18 +184,18 @@ class Song:
                                 duration=note.duration,
                                 volume=note.velocity,
                             )
-                    
+
                         curr_beat += note.duration
-        
-                    section_write_count += 1 # Increment counter to repeat sections
-                
+
+                    section_write_count += 1  # Increment counter to repeat sections
+
             full_song_write_count += 1
 
         if create_bass_track:
             # TODO remove hard coding of the track number
             self._write_bass_track(midi_file_writer, 1)
 
-        with open(dest, 'wb') as file:
+        with open(dest, "wb") as file:
             midi_file_writer.writeFile(file)
             Song.songs += 1
             logger.info(f"Song #{Song.songs} written to file in session.")

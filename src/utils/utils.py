@@ -29,11 +29,13 @@ def get_pitch_from_midi_value(midi) -> int:
 
 
 def cycle_n_times(input: List, n: int) -> List:
-    while n > 0:
-        first = input[0]
-        input = input[1:]
-        input.append(first)
-        n -= 1
+    if not input is None:
+        while n > 0:
+            first = input[0]
+            input = input[1:]
+            input.append(first)
+            n -= 1
+
     return input
 
 
