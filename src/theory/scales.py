@@ -38,6 +38,7 @@ class Scale(NoteSequence):
         if self.altered_notes:
             self.set_altered_notes(notes)
 
+
     def _set_notes(self) -> List[Note]:
         """Used to set the notes of the scale based on the root and formula.
 
@@ -165,12 +166,12 @@ class ScaleFactory:
 
 
 IonianScaleFact = ScaleFactory(
-    IonianModes.IONIAN,
+    "Major Scale",
     IonianFormula,
     IonianChordFormulas,
-    modes=[i for i in IonianModes],
+    modes=[i for i in MajorModes],
 )
-PentatonicScaleFact = ScaleFactory(PentatonicModes.MAJOR, PentatonicFormula)
+PentatonicScaleFact = ScaleFactory("Major Pentatonic", PentatonicFormula)
 WholeToneScaleFact = ScaleFactory("Whole Tone", WholeToneFomula)
 HarmonicMinScaleFact = ScaleFactory("Harmonic Minor", HarmonicMinorFormula)
 MelodicMinScaleFact = ScaleFactory("Meolodic Minor", MelodicMinorFormula)
@@ -180,11 +181,11 @@ MixolydianFlat6Fact = ScaleFactory("Mixolydian Flat 6", MixolydianFlat6Formula)
 AllScaleFactories = [
     IonianScaleFact,
     PentatonicScaleFact,
-    WholeToneScaleFact,
     MixolydianFlat6Fact,
     BluesScaleFact,
     MelodicMinScaleFact,
     HarmonicMinScaleFact,
+    WholeToneScaleFact,
 ]
 
 

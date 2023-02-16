@@ -50,7 +50,7 @@ Octave = Enum("Octave", [str(i + 1) for i in range(8)])
 
 # Note = Enum("Note", Notes)
 
-IonianModes = Enum(
+MajorModes = Enum(
     "Modes",
     ["IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN"],
 )

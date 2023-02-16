@@ -9,7 +9,7 @@ from typing import *
 from src.theory.datatypes import (
     StepType,
     ChordType,
-    IonianModes,
+    MajorModes,
 )
 from enum import Enum
 
@@ -151,51 +151,51 @@ ChordFormulas = {
     ChordType.MAJOR: {
         "description": "",
         "intervals": [1, 3, 5],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
     ChordType.MINOR: {
         "description": "",
         "intervals": [1, 3, 5],
-        "scale": IonianModes.AEOLIAN,
+        "scale": MajorModes.AEOLIAN,
     },
     ChordType.MAJOR6TH: {
         "description": "",
         "intervals": [1, 3, 5, 6],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
     ChordType.MINOR6TH: {
         "description": "",
         "intervals": [1, 3, 5, 6],
-        "scale": IonianModes.AEOLIAN,
+        "scale": MajorModes.AEOLIAN,
     },
     ChordType.DIMINISHED: {
         "description": "",
         "intervals": [1, 3, 5],
-        "scale": IonianModes.LOCRIAN,
+        "scale": MajorModes.LOCRIAN,
     },
     ChordType.SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
-        "scale": IonianModes.MIXOLYDIAN,
+        "scale": MajorModes.MIXOLYDIAN,
     },
     ChordType.MAJOR_SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
     ChordType.MINOR_SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
-        "scale": IonianModes.AEOLIAN,
+        "scale": MajorModes.AEOLIAN,
     },
     ChordType.SUS2: {
         "description": "Suspended 2nd",
         "intervals": [1, 2, 5],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
     ChordType.SUS4: {
         "description": "Suspended 4th",
         "intervals": [1, 4, 5],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
 }
