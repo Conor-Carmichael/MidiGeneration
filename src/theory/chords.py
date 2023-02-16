@@ -9,7 +9,7 @@ from random import randint
 from numpy import log2
 
 
-class ChordGeneric(NoteSequence):
+class ChordGeneric:
 
     """Holds information to form a chord later when scale root is determined."""
 
@@ -17,7 +17,22 @@ class ChordGeneric(NoteSequence):
         self,
         degree: int,
         type: ChordType,
+        slash_value: int,
+        inversion: int,
+        extensions: List[int],
+        altered_notes: List[dict],
+        *args,
+        **kwargs,
     ) -> None:
+        self.degree = degree
+        self.type = type
+        self.slash_value = slash_value
+        self.inversion = inversion
+        self.extensions = extensions
+        self.altered_notes = altered_notes
+        args, kwargs = args, kwargs
+
+    def define_chord(self, scale: Scale) -> Any:
         ...
 
 
