@@ -15,7 +15,7 @@ from src.ui.display import *
 import streamlit as st
 from random import randint
 
-check_and_init_state() # Checks for missing state variables and initializes
+check_and_init_state()  # Checks for missing state variables and initializes
 
 st.title("Configure MIDI Instrucions")
 
@@ -31,7 +31,9 @@ time_sig_cont = st.container()
 st.session_state.time_settings = set_time_signature(time_sig_cont)
 
 if not st.session_state.song.is_empty():
-    st.session_state.song.full_loops = st.number_input("Repeat All", min_value=1, value=1)
+    st.session_state.song.full_loops = st.number_input(
+        "Repeat All", min_value=1, value=1
+    )
 
     for prog_idx, section in enumerate(st.session_state.song):
         prog_container = st.expander(f"Progression {prog_idx+1}", expanded=True)
