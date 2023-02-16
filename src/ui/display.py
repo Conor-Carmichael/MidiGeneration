@@ -7,7 +7,8 @@ from copy import deepcopy
 
 
 # =========================================== #
-#           Display drivers
+#           Display drivers: input forms,
+#               and data dipslays
 # =========================================== #
 
 notes_list = NotesFactory.get_generic_notes()
@@ -24,14 +25,29 @@ def set_sidebar(homepage: bool = True):
     if homepage:
         st.sidebar.header("Configure App Usage")
         st.session_state.input_method = st.sidebar.radio(
-            "Input method", options=input_methods, help=input_help_str, disabled=True
+            "Input method", options=input_methods, help=input_help_str
         )
 
-def display_list(data:List[str]) -> None:
+
+def show_progression_controls():
+    # Display buttons
+    cols = st.columns(4)
+    temp = cols[0].button(":heavy_plus_sign: Add Chord")
+    st.session_state.adding_chord = temp if temp else st.session_state.adding_chord
+    cols[1].button("Start Next Progression", on_click=start_next_progression)
+    cols[2].button("Clear All Progressions", on_click=clear_all_progressions)
+    cols[3].button(
+        ":heavy_minus_sign: Clear Current Progression", on_click=clear_progression
+    )
+    st.info("When ready, open the sidebar on the left and go to Set Midi", icon="ℹ️")
+
+
+def display_list(data: List[str]) -> None:
     display_str = "<ul>"
     for ele in data:
         display_str += f"<li>{ele}</li>"
     display_str += "</ul>"
+    st.markdown(display_str, unsafe_allow_html=True)
     return display_str
 
 
@@ -43,6 +59,41 @@ def fmt_note_alter(note_alter: dict) -> str:
     return f"{note_alter['fn'][:-2].title()} {note_alter['degree']}"
 
 
+def scale_selection() -> Tuple[ScaleFactory, Note, str]:
+    root_note_str = st.selectbox(
+        "Root Note", options=notes_list.get_notes(), format_func=lambda note: note.name
+    )
+    scale_fact = st.selectbox(
+        "Scale Type",
+        options=AllScaleFactories,
+        format_func=lambda sf: sf.name.name.title()
+        if isinstance(sf.name, Enum)
+        else sf.name,
+    )
+    if scale_fact.has_modes():
+        mode = st.select_slider(
+            scale_fact.name + " Mode",
+            scale_fact.modes,
+            format_func=lambda mode: mode.name.title()
+            if isinstance(mode, Enum)
+            else mode,
+        )
+    else:
+        st.markdown(
+            "<i>No modes of this scale to select from</i>", unsafe_allow_html=True
+        )
+        mode = None
+
+    return scale_fact, root_note_str, mode
+
+
+# TODO is it possible to generalize chord input and pass filters?
+# def chord_input_form_two(
+#     root_choices:List,
+
+# )
+
+
 def diatonic_input_form(container: st.container) -> None:
     """Input for only diatonic chords
 
@@ -52,16 +103,39 @@ def diatonic_input_form(container: st.container) -> None:
     ...
 
 
-def generic_input_form(container: st.container) -> None:
+def generic_input_form(scale: Scale) -> None:
     """Generic input, create chords by scale degrees
 
     Args:
         container (st.container): Housing for form
     """
-    ...
+    degree = st.selectbox(
+        label="Scale Degree", options=[i + 1 for i in range(len(scale))]
+    )
+    chord_type = st.selectbox(
+        "Chord Type", options=[ct for ct in ChordType], format_func=fmt_name
+    )
+
+    slash_value = st.selectbox(
+        "Slash Value",
+        options=[i + 1 for i in range(len(scale))],
+    )
+    inversion_value = st.select_slider(
+        "Inversion",
+        options=["First", "Second"],
+        disabled=slash_value != None,
+    )
+    extensions = st.multiselect("Extensions", options=extension_values)
+    altered_notes = st.multiselect(
+        "Altered Notes",
+        options=note_alterations,
+        format_func=fmt_note_alter,
+        disabled=True,
+    )
+    st.button("Confirm Selections", on_click=set_chord_from_args, args=())
 
 
-def chord_input_form(container: st.container) -> None:
+def free_chord_input_form(container: st.container) -> None:
     """Input form for specific chords
 
     Args:
@@ -97,7 +171,7 @@ def chord_input_form(container: st.container) -> None:
         )
 
         cols[0].button(
-            "Add",
+            "Confirm Selections",
             on_click=set_chord_from_args,
             args=(
                 root_note_str,
@@ -111,7 +185,7 @@ def chord_input_form(container: st.container) -> None:
 
 
 def set_chord_from_args(root, ct, slash, inv, ext, alters):
-    # TODO Shouldnt be messing with state variable in display code 
+    # TODO Shouldnt be messing with state variable in display code
     # but wasnt working on first attempt to change
     root = NoteGeneric(name=root)
     chord = Chord(root, ct, slash, inv, ext, alters)
@@ -202,7 +276,6 @@ def chord_midi_form(chord: Chord, chord_idx: int, prog_idx: int):
 
 def generate_track_form(container: st.container) -> None:
     with container:
-            
         st.header("Generate MIDI File")
         st.session_state.file_name = (
             st.text_input("Midi File Name", value="midi_notes") + ".mid"
@@ -216,8 +289,10 @@ def generate_track_form(container: st.container) -> None:
         cols = st.columns(2)
         result = cols[0].button("Generate MIDI File", on_click=generate_midi_files)
         download_button_empty = cols[1].empty()
-        
+
         if result:
             st.success("MIDI created successfully")
-            with open(st.session_state.file_name, 'rb') as f:
-                download_button_empty.download_button("Download File", f, file_name=st.session_state.file_name)
+            with open(st.session_state.file_name, "rb") as f:
+                download_button_empty.download_button(
+                    "Download File", f, file_name=st.session_state.file_name
+                )

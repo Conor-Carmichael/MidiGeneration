@@ -16,23 +16,61 @@ input_methods = ["Free", "Generic", "Diatonic", "Text"]
 save_dir = os.path.join(os.getcwd(), "midi_values")
 
 
+
+# Used to type check state values as they are set
+# NOTE: While this requires some manual intervention, it should ensure
+# that values are just _formatted_ for display, and then the internal
+# value is the value it should be. Check that the type of the value is
+# in this dict mapping.
+type_check_state = {
+    "current_progression": [ChordProgression],
+    "song": [Song],
+    "adding_chord": [bool],
+    "time_settings": [tuple],
+    "dest": [str],
+    "input_method": [str],
+    "create_bass_track": [bool],
+    "scale_type": [ScaleFactory],
+    "scale_mode": [str],
+    "scale_root": [NoteGeneric, Note],
+}
+
+state_value_defaults = {
+    "current_progression": ChordProgression.empty(),
+    "song": Song.empty(),
+    "adding_chord": False,
+    "time_settings": (120, 4, 4),
+    "dest": "",
+    "input_method": input_methods[0],
+    "create_bass_track": False,
+    "scale_type": None,
+    "scale_mode": None,
+    "scale_root": None,
+}
+
+
 def check_and_init_state():
-    if not "current_progression" in st.session_state:
-        st.session_state.current_progression = ChordProgression.empty()
-    if not "song" in st.session_state:
-        st.session_state.song = Song.empty()
-    if not "adding_chord" in st.session_state:
-        st.session_state.adding_chord = False
-    if not "setting_chord_midi" in st.session_state:
-        st.session_state.setting_chord_midi = False
-    if not "time_settings" in st.session_state:
-        st.session_state.time_settings = (120, 4, 4)
-    if not "dest" in st.session_state:
-        st.session_state.dest = ""
-    if not "input_method" in st.session_state:
-        st.session_state.input_method = input_methods[0]
-    if not "create_bass_track" in st.session_state:
-        st.session_state.create_bass_track = False
+    for key, default in state_value_defaults.items():
+        if not key in st.session_state:
+            set_state(key, default)
+
+
+# Also i dont like writing st.session_state.---- = ----
+def set_state(k, v):
+    """Only allows state variables in the inialization routine to be set and to the right type"""
+    if k in state_value_defaults and k in type_check_state:
+        if type(v) in type_check_state.get(k):
+            # Cannot set back to None, must set to its initial value?
+            setattr(st.session_state, k, v) 
+    else:
+        raise ValueError(f"Key provided {k} is not an expected value for the state. DEV: Make sure the type check dictionary is updated.")
+
+def get_state_val(k):
+    """Only allows state variables in the inialization routine to be got"""
+    if k in state_value_defaults:
+        getattr(st.session_state, k)
+    else:
+        raise ValueError(f"Key provided {k} is not an expected value for the state.")
 
 
 state_file = os.path.join(".", "src", "ui", "store", "state.pkl")
@@ -118,12 +156,10 @@ def generate_midi_files():
             os.remove(st.session_state.dest)
 
         st.session_state.song.write_song_to_midi(
-            st.session_state.file_name,
-            st.session_state.create_bass_track
+            st.session_state.file_name, st.session_state.create_bass_track
         )
         success = True
     except Exception as E:
         success = False
     finally:
-
         return success
