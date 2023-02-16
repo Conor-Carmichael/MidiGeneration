@@ -29,7 +29,10 @@ class ChordProgression:
             raise StopIteration
 
     def __str__(self) -> str:
-        return " → ".join([str(c) for c in self.chords])
+        if self.__len__() > 0:
+            return " → ".join([str(c) for c in self.chords])
+        else:
+            return "ChordProgression is empty"
 
     def inc_repeats(self) -> None:
         self.repeats += 1
@@ -81,7 +84,10 @@ class Song:
         return self.__len__() == 0
 
     def __str__(self) -> str:
-        return " \n\n ".join([str(sect) for sect in self.sections])
+        if self.__len__() > 0 :
+            return " \n\n ".join([str(sect) for sect in self.sections]) 
+        else:
+            return "Song is empty"
 
     @classmethod
     def empty(cls) -> Any:

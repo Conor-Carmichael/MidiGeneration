@@ -128,6 +128,13 @@ class ScaleFactory:
     def has_chord_mappings(self) -> bool:
         return not self.chord_mappings is None
 
+    @classmethod
+    def empty(cls) -> Any:
+        return ScaleFactory("", [])
+
+    def is_empty(self) -> bool:
+        return self.name != "" and self.steps != []
+
     def get_mode_definition(self, mode_name: Enum) -> Any:
         """
         For the supplied mode,

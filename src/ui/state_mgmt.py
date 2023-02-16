@@ -43,16 +43,20 @@ state_value_defaults = {
     "file_name": "",
     "input_method": input_methods[0],
     "create_bass_track": False,
-    "scale_type": None,
-    "scale_mode": None,
-    "scale_root": None,
+    "scale_type": ScaleFactory.empty(),
+    "scale_mode": "",
+    "scale_root": NoteGeneric.empty(),
 }
 
 
 def check_and_init_state():
     for key, default in state_value_defaults.items():
         if not key in st.session_state:
+            print(f"Setting: {key} -- {default}")
             set_state_val(key, default)
+        else:
+            print(f"{key} already set")
+
 
 
 # Also i dont like writing st.session_state.---- = ----
@@ -68,8 +72,9 @@ def set_state_val(k, v):
 def get_state_val(k):
     """Only allows state variables in the inialization routine to be got"""
     if k in state_value_defaults:
-        getattr(st.session_state, k)
+        return getattr(st.session_state, k)
     else:
+        print(f"Key provided {k} is not an expected value for the state.")
         raise ValueError(f"Key provided {k} is not an expected value for the state.")
 
 

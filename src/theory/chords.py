@@ -33,7 +33,18 @@ class ChordGeneric:
         args, kwargs = args, kwargs
 
     def define_chord(self, scale: Scale) -> Any:
+        """Take the stored info an create a Chord from it."""
         ...
+
+    def __str__() -> str:
+        string_repr = ""
+        # Convert the degree to a roman numeral
+        # If major or minor quality, make capital or lowercase
+
+        # Similar to Chord, add the symbols and extension
+
+
+        return string_repr
 
 
 class Chord(NoteSequence):

@@ -17,19 +17,31 @@ from random import randint
 
 check_and_init_state()  # Checks for missing state variables and initializes
 
-st.title("Configure MIDI Instrucions")
+# TODO: If input is generic, text: need to calculate the degree chords
+
+# if get_state_val("input_method").upper() in ["GENERIC"]:
+    
+
+st.title(" Configure MIDI Instrucions")
 
 # If there is a current progresssion not yet added to the song
 if not get_state_val("current_progression").is_empty():
     start_next_progression()
 
-
 # Start display code
 set_sidebar(homepage=False)
 
+st.header(":notes: Your Chords")
+display_song(
+    get_state_val("song"), get_state_val("current_progression")
+)
 time_sig_cont = st.container()
-set_state_val("time_settings", set_time_signature(time_sig_cont))
+with time_sig_cont:
+    st.header(":musical_score: Set the Time Signature")
+    set_state_val("time_settings", set_time_signature())
 
+
+st.header(":control_knobs: Configure Playback by Chord")
 if not get_state_val("song").is_empty():
     get_state_val("song").full_loops = st.number_input(
         "Repeat All", min_value=1, value=1
@@ -52,8 +64,12 @@ if not get_state_val("song").is_empty():
 
                 chord_midi_settings["start_time"] = "00:00:00.00"
                 chord.add_midi_info(chord_midi_settings)
+    
+    st.header(":file_folder: Download Your MIDI File")
+    generate_track_form(st.container())
 
 else:
-    st.header("Nothing yet..")
+    st.markdown("<p>Nothing yet...</p>", unsafe_allow_html=True)
 
-generate_track_form(st.container())
+
+
