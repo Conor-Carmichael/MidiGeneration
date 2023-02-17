@@ -45,13 +45,13 @@ ChordType = Enum(
     [
         "MAJOR",
         "MINOR",
-        "MAJOR6TH",
-        "MINOR6TH",
-        "DIMINISHED",
         "SEVENTH",
         "MAJOR_SEVENTH",
         "MINOR_SEVENTH",
-        "SUS2",
-        "SUS4",
+        "MAJOR_SIXTH",
+        "MINOR_SIXTH",
+        "DIMINISHED",
+        "SUSPENDED_SECOND",
+        "SUSPENDED_FOURTH",
     ],
 )
