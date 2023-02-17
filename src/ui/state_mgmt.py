@@ -52,11 +52,7 @@ state_value_defaults = {
 def check_and_init_state():
     for key, default in state_value_defaults.items():
         if not key in st.session_state:
-            print(f"Setting: {key} -- {default}")
             set_state_val(key, default)
-        else:
-            print(f"{key} already set")
-
 
 
 # Also i dont like writing st.session_state.---- = ----
@@ -76,13 +72,6 @@ def get_state_val(k):
     else:
         print(f"Key provided {k} is not an expected value for the state.")
         raise ValueError(f"Key provided {k} is not an expected value for the state.")
-
-
-state_file = os.path.join(".", "src", "ui", "store", "state.pkl")
-
-
-def dev_set_state(state: dict):
-    ...
 
 
 def display_state():

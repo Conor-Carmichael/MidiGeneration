@@ -32,9 +32,7 @@ chord_disp_container = st.container()
 #                 Run Display
 # ****************************************** #
 set_sidebar()
-display_song(
-    get_state_val("song"), get_state_val("current_progression")
-)
+display_song(get_state_val("song"), get_state_val("current_progression"))
 
 # Input where all chords shown as option
 with st.container():
@@ -44,16 +42,19 @@ with st.container():
 with st.container():
     if get_state_val("input_method").upper() == "FREE":
         # Handle chord input according to input method
-        if get_state_val("adding_chord"):
-            chord_args = free_chord_input_form()
-            if chord_args:
-                set_chord_from_args(*chord_args)
+        chord_input_form(
+            root_options=notes_list.get_notes(),
+            root_fmt_fn=lambda note: note.name if not note is None else note,
+            chord_type_options=[chord for chord in ChordType],
+            chord_type_fmt_fn=lambda chord_type: " ".join(chord_type.name.split("_")).title(),
+            inversion_range=inversion_values,
+            submit_fn=submit_chord_to_prog
+        )
 
     elif get_state_val("input_method").upper() == "TEXT":
-        st.markdown("Text input", unsafe_allow_html=True)
+        st.markdown("Text input is a work in progress", unsafe_allow_html=True)
 
     else:
-        scale_prog_bar = st.progress(0)
         scale_factory, scale_root, scale_mode = scale_selection()
 
         set_state_val("scale_type", scale_factory)
@@ -61,22 +62,31 @@ with st.container():
         set_state_val("scale_root", scale_root)
 
         # Get the appopriate scale type give the base scale and mode choices
-        set_state_val("scale_type",
-            get_state_val("scale_type").get_mode_definition(mode_name=get_state_val("scale_mode"))
+        set_state_val(
+            "scale_type",
+            get_state_val("scale_type").get_mode_definition(
+                mode_name=get_state_val("scale_mode")
+            )
             if not get_state_val("scale_mode") is None
-            else scale_factory
+            else scale_factory,
         )
 
-
-        scale = get_state_val("scale_type").generate_scale(root_note=get_state_val("scale_root"))
-
-        scale_prog_bar.progress(100)
-        scale_prog_bar.empty()
+        scale = get_state_val("scale_type").generate_scale(
+            root_note=get_state_val("scale_root")
+        )
 
         if get_state_val("input_method").upper() == "GENERIC":
-
-            if get_state_val("adding_chord"):
-                generic_input_form(scale)
+            
+            chord_input_form(
+                [i + 1 for i in range(len(scale))][:-1],
+                None,
+                [chord for chord in ChordType],
+                lambda chord_type: " ".join(chord_type.name.split("_")).title()
+                if not chord_type is None
+                else chord_type,
+                inversion_values,
+                submit_generic_chord_to_prog,
+            )
 
         elif get_state_val("input_method").upper() == "DIATONIC":
             st.markdown("Diatonic input is a work in progress", unsafe_allow_html=True)
