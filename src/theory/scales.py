@@ -38,6 +38,14 @@ class Scale(NoteSequence):
         if self.altered_notes:
             self.set_altered_notes(notes)
 
+    def is_empty(self) -> bool:
+        return self.root == None, self.formula == []
+
+    def empty()->object:
+        return Scale(
+            None, []
+        )
+
 
     def _set_notes(self) -> List[Note]:
         """Used to set the notes of the scale based on the root and formula.
@@ -45,6 +53,8 @@ class Scale(NoteSequence):
         Returns:
             List[Note]: Returns value for clarity, and set it in __init__
         """
+        if self.root == None:
+            return []
         notes_set = NotesFactory.get_generic_notes()
         notes = [self.root]
         prev_note = self.root

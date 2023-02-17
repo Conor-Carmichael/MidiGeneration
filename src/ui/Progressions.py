@@ -74,9 +74,10 @@ with st.container():
         scale = get_state_val("scale_type").generate_scale(
             root_note=get_state_val("scale_root")
         )
+        set_state_val("scale", scale)
 
         if get_state_val("input_method").upper() == "GENERIC":
-            
+
             chord_input_form(
                 [i + 1 for i in range(len(scale))][:-1],
                 None,

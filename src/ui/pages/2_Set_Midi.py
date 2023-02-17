@@ -17,16 +17,31 @@ from random import randint
 
 check_and_init_state()  # Checks for missing state variables and initializes
 
-# TODO: If input is generic, text: need to calculate the degree chords
+# If there is a current progresssion not yet added to the song
+if not get_state_val("current_progression").is_empty():
+    start_next_progression()
 
-# if get_state_val("input_method").upper() in ["GENERIC"]:
+# TODO: If input is generic, text: need to calculate the degree chords
+if get_state_val("input_method").upper() == "GENERIC":
+
+    print("Setting to real")
+    new_song = Song.empty()
+    for section in get_state_val("song"):
+        new_section = ChordProgression.empty()
+
+        for chord in section:
+            # Convert the generic chord to a full chord:
+            new_chord = chord.define_chord(get_state_val("scale"))
+            new_section.add_chord(new_chord)
+        
+        new_song.add_section(new_section)
+
+    set_state_val("song", new_song)
+
     
 
 st.title(" Configure MIDI Instrucions")
 
-# If there is a current progresssion not yet added to the song
-if not get_state_val("current_progression").is_empty():
-    start_next_progression()
 
 # Start display code
 set_sidebar(homepage=False)
@@ -63,6 +78,8 @@ if not get_state_val("song").is_empty():
                 chord_midi_settings = chord_midi_form(chord, chord_idx, prog_idx)
 
                 chord_midi_settings["start_time"] = "00:00:00.00"
+                if type(chord) == ChordGeneric:
+                    chord = chord.define_chord(get_state_val("scale"))
                 chord.add_midi_info(chord_midi_settings)
     
     st.header(":file_folder: Download Your MIDI File")

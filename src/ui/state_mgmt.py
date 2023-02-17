@@ -33,6 +33,7 @@ type_check_state = {
     "scale_type": [ScaleFactory],
     "scale_mode": [str],
     "scale_root": [NoteGeneric, Note],
+    "scale": [Scale]
 }
 
 state_value_defaults = {
@@ -46,6 +47,7 @@ state_value_defaults = {
     "scale_type": ScaleFactory.empty(),
     "scale_mode": "",
     "scale_root": NoteGeneric.empty(),
+    "scale": Scale.empty()
 }
 
 
@@ -145,15 +147,18 @@ def load_state():
 
 def generate_midi_files():
     success = False
-    try:
-        if os.path.exists(get_state_val("file_name")):
-            os.remove(get_state_val("file_name"))
+    # try:
+    if os.path.exists(get_state_val("file_name")):
+        os.remove(get_state_val("file_name"))
 
-        get_state_val("song").write_song_to_midi(
-            get_state_val("file_name"), get_state_val("create_bass_track")
-        )
-        success = True
-    except Exception as E:
-        success = False
-    finally:
-        return success
+    get_state_val("song").write_song_to_midi(
+        get_state_val("file_name"),
+        get_state_val("create_bass_track"),
+        is_generic=get_state_val("input_method").upper()=="GENERIC",
+        # scale=get_state_val("scale_type")
+    )
+    # success = True
+    # except Exception as E:
+    #     success = False
+    # finally:
+    return success

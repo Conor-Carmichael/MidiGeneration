@@ -81,9 +81,11 @@ class ChordGeneric:
 
     def define_chord(self, scale: Scale) -> Any:
         """Take the stored info an create a Chord from it."""
+        # Note: The degree is in, the readable, index + 1 format. So subtract one for 
+        # the appropriate value in the scale
 
         return Chord(
-            root=scale.get_note_by_idx(self.degree),
+            root=scale.get_note_by_idx(self.degree-1),
             type=self.type,
             slash_value=self.slash_value,
             inversion=self.inversion,
