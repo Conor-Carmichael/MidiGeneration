@@ -24,14 +24,14 @@ if not get_state_val("current_progression").is_empty():
 # TODO: If input is generic, text: need to calculate the degree chords
 if get_state_val("input_method").upper() == "GENERIC":
 
-    print("Setting to real")
+    # This is wasteful, need to find way to skip this process after its been run once.
     new_song = Song.empty()
     for section in get_state_val("song"):
         new_section = ChordProgression.empty()
 
         for chord in section:
             # Convert the generic chord to a full chord:
-            new_chord = chord.define_chord(get_state_val("scale"))
+            new_chord = chord.define_chord(get_state_val("scale")) if isinstance(chord, ChordGeneric) else chord
             new_section.add_chord(new_chord)
         
         new_song.add_section(new_section)

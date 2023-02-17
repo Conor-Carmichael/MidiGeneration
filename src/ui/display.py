@@ -42,7 +42,7 @@ def set_sidebar(homepage: bool = True):
     if homepage:
         st.sidebar.header("Configure App Usage")
         selected = st.sidebar.radio(
-            "Input method", options=input_methods, help=get_state_val("input_method")
+            "Input method", options=input_methods, index=input_methods.index(get_state_val("input_method"))
         )
         both_empty = get_state_val("song").is_empty() and get_state_val("current_progression").is_empty()
 

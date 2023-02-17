@@ -61,6 +61,7 @@ with st.container():
         set_state_val("scale_mode", scale_mode)
         set_state_val("scale_root", scale_root)
 
+        print("Here")
         # Get the appopriate scale type give the base scale and mode choices
         set_state_val(
             "scale_type",
