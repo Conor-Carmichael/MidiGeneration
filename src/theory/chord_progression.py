@@ -13,6 +13,7 @@ class ChordProgression:
 
         self.current = 0
 
+
     def __len__(self) -> int:
         return len(self.chords)
 

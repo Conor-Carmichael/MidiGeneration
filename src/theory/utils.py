@@ -1,19 +1,11 @@
 from collections import OrderedDict
 
 
-# Taken from/adapted from stack overflow post:
+# Taken/adapted from stack overflow post:
 # https://stackoverflow.com/questions/28777219/basic-program-to-convert-integer-to-roman-numerals
 def get_roman_numeral(num):
 
     roman = OrderedDict()
-    roman[1000] = "M"
-    roman[900] = "CM"
-    roman[500] = "D"
-    roman[400] = "CD"
-    roman[100] = "C"
-    roman[90] = "XC"
-    roman[50] = "L"
-    roman[40] = "XL"
     roman[10] = "X"
     roman[9] = "IX"
     roman[5] = "V"
@@ -29,3 +21,12 @@ def get_roman_numeral(num):
                 break
 
     return "".join([a for a in roman_num(num)])
+
+
+def get_note_duration() -> int:
+
+    duration = 0.0
+
+
+
+    return duration

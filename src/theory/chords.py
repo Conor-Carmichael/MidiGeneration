@@ -53,6 +53,7 @@ class ChordGeneric:
         string_repr = get_roman_numeral(self.degree) + " " + symb
 
         # If major or minor quality, make capital or lowercase
+        # This is redundant..
         if "MINOR" in self.type.name.upper() or "MIN" in self.type.name.upper():
             string_repr = string_repr.lower()
 
@@ -87,7 +88,7 @@ class ChordGeneric:
         return Chord(
             root=scale.get_note_by_idx(self.degree-1),
             type=self.type,
-            slash_value=self.slash_value,
+            slash_value=scale.get_note_by_idx(self.slash_value-1) if not self.slash_value is None else self.slash_value,
             inversion=self.inversion,
             extensions=self.extensions,
             altered_notes=self.altered_notes,

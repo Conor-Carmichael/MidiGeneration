@@ -47,5 +47,7 @@ li_items = [
     If you don't know why this is an 'issue' ignore! \
     If this bothers you, it bothers me too. I have implemented the notes in a way where I may be able\
     to fix this soon. But it isn't as important as some other features, so its on the back burner",
+    "Sometimes when switching pages Progressions -> Set Midi, the chord adding display doesn't disappear. I believe this is an \
+        issue with the streamlit page management system, but I am looking into it."
 ]
 display_list(li_items)

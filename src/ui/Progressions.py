@@ -32,13 +32,15 @@ chord_disp_container = st.container()
 #                 Run Display
 # ****************************************** #
 set_sidebar()
+
 display_song(get_state_val("song"), get_state_val("current_progression"))
 
-# Input where all chords shown as option
-with st.container():
-    show_progression_controls()
+show_progression_controls()
 
 
+# ************************ #
+#        Chord Inputs      #
+# ************************ #
 with st.container():
     if get_state_val("input_method").upper() == "FREE":
         # Handle chord input according to input method
@@ -52,34 +54,44 @@ with st.container():
         )
 
     elif get_state_val("input_method").upper() == "TEXT":
-        st.markdown("Text input is a work in progress", unsafe_allow_html=True)
+        st.markdown("Text input is coming soon", unsafe_allow_html=True)
 
     else:
         scale_factory, scale_root, scale_mode = scale_selection()
 
-        set_state_val("scale_type", scale_factory)
+        set_state_val("scale_factory", scale_factory)
         set_state_val("scale_mode", scale_mode)
         set_state_val("scale_root", scale_root)
 
         # Get the appopriate scale type give the base scale and mode choices
+
+        # Set the state value
         set_state_val(
-            "scale_type",
-            get_state_val("scale_type").get_mode_definition(
+            "scale_factory",
+            # Sets it to either the new scale factory or its current value
+            get_state_val("scale_factory").get_mode_definition(
                 mode_name=get_state_val("scale_mode")
             )
             if not get_state_val("scale_mode") is None
-            else scale_factory,
+            else get_state_val("scale_factory"),
         )
 
-        scale = get_state_val("scale_type").generate_scale(
+        scale = get_state_val("scale_factory").generate_scale(
             root_note=get_state_val("scale_root")
         )
         set_state_val("scale", scale)
 
         if get_state_val("input_method").upper() == "GENERIC":
 
+            root_opts = [
+                i + 1 
+                for i in range(
+                    len(get_state_val("scale"))
+                )
+            ][:-1] # Shouldn't need to have 8 as an option
+
             chord_input_form(
-                [i + 1 for i in range(len(scale))][:-1],
+                root_opts,
                 None,
                 [chord for chord in ChordType],
                 lambda chord_type: " ".join(chord_type.name.split("_")).title()
@@ -90,4 +102,5 @@ with st.container():
             )
 
         elif get_state_val("input_method").upper() == "DIATONIC":
-            st.markdown("Diatonic input is a work in progress", unsafe_allow_html=True)
+            st.markdown("Diatonic restricted input is coming soon", unsafe_allow_html=True)
+            # reset the input form args each time its changed

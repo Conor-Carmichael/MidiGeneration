@@ -127,6 +127,9 @@ class ScaleFactory:
         self.chord_mappings = chord_mappings
         self.modes = modes
 
+    def __str__(self) -> str:
+        return f"ScaleFactory(name={self.name},steps={self.steps}, ...)"
+
     def has_modes(self) -> bool:
         """Returns true if this scale has a list of modes"""
         return not self.modes is None

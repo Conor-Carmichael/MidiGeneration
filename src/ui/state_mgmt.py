@@ -30,7 +30,7 @@ type_check_state = {
     "file_name": [str],
     "input_method": [str],
     "create_bass_track": [bool],
-    "scale_type": [ScaleFactory],
+    "scale_factory": [ScaleFactory],
     "scale_mode": [str],
     "scale_root": [NoteGeneric, Note],
     "scale": [Scale]
@@ -44,7 +44,7 @@ state_value_defaults = {
     "file_name": "",
     "input_method": input_methods[0],
     "create_bass_track": False,
-    "scale_type": ScaleFactory.empty(),
+    "scale_factory": ScaleFactory.empty(),
     "scale_mode": "",
     "scale_root": NoteGeneric.empty(),
     "scale": Scale.empty()
@@ -155,7 +155,7 @@ def generate_midi_files():
         get_state_val("file_name"),
         get_state_val("create_bass_track"),
         is_generic=get_state_val("input_method").upper()=="GENERIC",
-        # scale=get_state_val("scale_type")
+        # scale=get_state_val("scale_factory")
     )
     # success = True
     # except Exception as E:

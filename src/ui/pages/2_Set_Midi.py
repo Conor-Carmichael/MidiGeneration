@@ -50,10 +50,9 @@ st.header(":notes: Your Chords")
 display_song(
     get_state_val("song"), get_state_val("current_progression")
 )
-time_sig_cont = st.container()
-with time_sig_cont:
-    st.header(":musical_score: Set the Time Signature")
-    set_state_val("time_settings", set_time_signature())
+
+st.header(":musical_score: Set the Time Signature")
+set_time_signature()
 
 
 st.header(":control_knobs: Configure Playback by Chord")
