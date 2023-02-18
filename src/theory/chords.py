@@ -1,4 +1,5 @@
 from src.theory import *
+from src.theory.utils import get_roman_numeral
 from src.theory.note_sequence import NoteSequence
 from src.theory.notes import Note, NoteGeneric
 from src.theory.constants import ChordFormulas, ChordSymbols, ChordType
@@ -9,7 +10,7 @@ from random import randint
 from numpy import log2
 
 
-class ChordGeneric(NoteSequence):
+class ChordGeneric:
 
     """Holds information to form a chord later when scale root is determined."""
 
@@ -17,8 +18,81 @@ class ChordGeneric(NoteSequence):
         self,
         degree: int,
         type: ChordType,
+        slash_value: int = None,
+        inversion: int = 0,
+        extensions: List[int] = [],
+        altered_notes: List[dict] = None,
+        *args,
+        **kwargs,
     ) -> None:
-        ...
+        self.degree = degree
+        self.type = type
+        self.slash_value = slash_value
+        self.inversion = inversion
+        self.extensions = extensions
+        self.altered_notes = altered_notes
+
+        self.has_extensions = len(self.extensions) > 0 and max(self.extensions) > 8
+
+        if not self.slash_value is None and self.inversion > 0:
+            raise ValueError("Cannot invert a slash chord.")
+
+        args, kwargs = args, kwargs
+
+    def __str__(self) -> str:
+        string_repr = ""
+        symb = (
+            ChordSymbols[self.type][1]
+            if self.has_extensions
+            else ChordSymbols[self.type][0]
+        )
+        if symb == "m":
+            # Lower case replaces the 'minor' or 'm' on numerals
+            symb = ""
+        # Convert the degree to a roman numeral
+        string_repr = get_roman_numeral(self.degree) + " " + symb
+
+        # If major or minor quality, make capital or lowercase
+        # This is redundant..
+        if "MINOR" in self.type.name.upper() or "MIN" in self.type.name.upper():
+            string_repr = string_repr.lower()
+
+        if self.has_extensions:
+            # To calculate if C add 11 or just C 11.
+            # Must include all sub extensions, so if index of the ext in the possible extensions,
+            # Plus 1 is the same as the length of the current extensions, then all relevant ext
+            # are included. IF extensions = [9, 11], max ext is 11, the index of 11 is 1, must be 2 extensions (9 and 11)
+            # to be a C11 chord, else if only 11 is present its an Add 11 chord
+            max_ext = max(self.extensions)
+            max_ext_idx = extension_values.index(max_ext)
+
+            if max_ext != 0 and max_ext_idx + 1 == len(self.extensions):
+                ext_str = str(max_ext)
+            else:
+                ext_str = "add " + ", ".join([str(e) for e in self.extensions])
+
+            string_repr += " " + ext_str
+
+        if self.slash_value:
+            string_repr += " / " + str(self.slash_value)
+        elif self.inversion > 0:
+            string_repr += f" / {self.inversion + 1}"
+
+        return string_repr
+
+    def define_chord(self, scale: Scale) -> Any:
+        """Take the stored info an create a Chord from it."""
+        # Note: The degree is in, the readable, index + 1 format. So subtract one for 
+        # the appropriate value in the scale
+
+        return Chord(
+            root=scale.get_note_by_idx(self.degree-1),
+            type=self.type,
+            slash_value=scale.get_note_by_idx(self.slash_value-1) if not self.slash_value is None else self.slash_value,
+            inversion=self.inversion,
+            extensions=self.extensions,
+            altered_notes=self.altered_notes,
+        )
 
 
 class Chord(NoteSequence):
@@ -77,7 +151,7 @@ class Chord(NoteSequence):
 
         super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
 
-        if self.altered_notes:
+        if self.altered_notes != []:
             raise NotImplementedError("altered_notes for chord")
             self.set_altered_notes(notes)
 

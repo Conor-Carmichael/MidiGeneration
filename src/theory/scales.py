@@ -38,12 +38,23 @@ class Scale(NoteSequence):
         if self.altered_notes:
             self.set_altered_notes(notes)
 
+    def is_empty(self) -> bool:
+        return self.root == None, self.formula == []
+
+    def empty()->object:
+        return Scale(
+            None, []
+        )
+
+
     def _set_notes(self) -> List[Note]:
         """Used to set the notes of the scale based on the root and formula.
 
         Returns:
             List[Note]: Returns value for clarity, and set it in __init__
         """
+        if self.root == None:
+            return []
         notes_set = NotesFactory.get_generic_notes()
         notes = [self.root]
         prev_note = self.root
@@ -116,6 +127,9 @@ class ScaleFactory:
         self.chord_mappings = chord_mappings
         self.modes = modes
 
+    def __str__(self) -> str:
+        return f"ScaleFactory(name={self.name},steps={self.steps}, ...)"
+
     def has_modes(self) -> bool:
         """Returns true if this scale has a list of modes"""
         return not self.modes is None
@@ -126,6 +140,13 @@ class ScaleFactory:
 
     def has_chord_mappings(self) -> bool:
         return not self.chord_mappings is None
+
+    @classmethod
+    def empty(cls) -> Any:
+        return ScaleFactory("", [])
+
+    def is_empty(self) -> bool:
+        return self.name != "" and self.steps != []
 
     def get_mode_definition(self, mode_name: Enum) -> Any:
         """
@@ -165,12 +186,12 @@ class ScaleFactory:
 
 
 IonianScaleFact = ScaleFactory(
-    IonianModes.IONIAN,
+    "Major Scale",
     IonianFormula,
     IonianChordFormulas,
-    modes=[i for i in IonianModes],
+    modes=[i for i in MajorModes],
 )
-PentatonicScaleFact = ScaleFactory(PentatonicModes.MAJOR, PentatonicFormula)
+PentatonicScaleFact = ScaleFactory("Major Pentatonic", PentatonicFormula)
 WholeToneScaleFact = ScaleFactory("Whole Tone", WholeToneFomula)
 HarmonicMinScaleFact = ScaleFactory("Harmonic Minor", HarmonicMinorFormula)
 MelodicMinScaleFact = ScaleFactory("Meolodic Minor", MelodicMinorFormula)
@@ -180,11 +201,11 @@ MixolydianFlat6Fact = ScaleFactory("Mixolydian Flat 6", MixolydianFlat6Formula)
 AllScaleFactories = [
     IonianScaleFact,
     PentatonicScaleFact,
-    WholeToneScaleFact,
     MixolydianFlat6Fact,
     BluesScaleFact,
     MelodicMinScaleFact,
     HarmonicMinScaleFact,
+    WholeToneScaleFact,
 ]
 
 

@@ -9,8 +9,11 @@ from src.theory.constants import SHARP, FLAT, midi_start_val, midi_end_val
 import numpy as np
 
 
+
+
 class NoteGeneric:
 
+    empty_val = "__"
     """Note class with no pitch or midi information. Basically just the name."""
 
     def __init__(self, name: str, next_note=None, prev_note=None) -> None:
@@ -20,6 +23,8 @@ class NoteGeneric:
 
         self.next_note = next_note
         self.prev_note = prev_note
+
+        self.empy_val = "__"
 
     def __eq__(self, __o: object) -> bool:
         if isinstance(__o, NoteGeneric) and self.name == __o.name:
@@ -32,6 +37,13 @@ class NoteGeneric:
 
     def __iter__(self):
         return self.next_note
+
+    @classmethod
+    def empty(cls) -> Any:
+        return NoteGeneric(cls.empty_val)
+
+    def is_empty(self) -> bool:
+        return self.name == NoteGeneric.empty_val
 
     def sharpen(self, keep_base_note_name: bool):
         """
@@ -69,6 +81,8 @@ class Note(NoteGeneric):
     To allow for more significant use, the Note class.
     Holds pitch, velocity, duration, start time, midi value for the note.
     """
+
+
 
     def __init__(
         self,

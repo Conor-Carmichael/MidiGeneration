@@ -72,7 +72,7 @@ def test_ionian_scale_factory():
             ]
         )
     )
-    scale = IonianScaleFact.get_mode_definition(IonianModes.DORIAN).generate_scale(
+    scale = IonianScaleFact.get_mode_definition(MajorModes.DORIAN).generate_scale(
         NOTES["D"][0]
     )
     assert str(scale) == str(
@@ -90,7 +90,7 @@ def test_ionian_scale_factory():
         )
     )
 
-    scale = IonianScaleFact.get_mode_definition(IonianModes.AEOLIAN).generate_scale(
+    scale = IonianScaleFact.get_mode_definition(MajorModes.AEOLIAN).generate_scale(
         NOTES["A"][0]
     )
     assert str(scale) == str(

@@ -9,7 +9,7 @@ from typing import *
 from src.theory.datatypes import (
     StepType,
     ChordType,
-    IonianModes,
+    MajorModes,
 )
 from enum import Enum
 
@@ -137,65 +137,65 @@ ChordSymbols = {
     # First is for triad, second is for extended
     ChordType.MAJOR: ["", "maj"],
     ChordType.MINOR: ["m", "min"],
-    ChordType.MAJOR6TH: ["6", "maj6"],
-    ChordType.MINOR6TH: ["m6", "min6"],
+    ChordType.MAJOR_SIXTH: ["6", "maj6"],
+    ChordType.MINOR_SIXTH: ["m6", "min6"],
     ChordType.DIMINISHED: ["°", "dim"],
     ChordType.SEVENTH: ["7", ""],
     ChordType.MAJOR_SEVENTH: ["maj7", "∆7"],
     ChordType.MINOR_SEVENTH: ["min7", "-7"],
-    ChordType.SUS2: ["Sus2", "Sus2"],
-    ChordType.SUS4: ["Sus4", "Sus4"],
+    ChordType.SUSPENDED_SECOND: ["Sus2", "Sus2"],
+    ChordType.SUSPENDED_FOURTH: ["Sus4", "Sus4"],
 }
 
 ChordFormulas = {
     ChordType.MAJOR: {
         "description": "",
         "intervals": [1, 3, 5],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
     ChordType.MINOR: {
         "description": "",
         "intervals": [1, 3, 5],
-        "scale": IonianModes.AEOLIAN,
+        "scale": MajorModes.AEOLIAN,
     },
-    ChordType.MAJOR6TH: {
+    ChordType.MAJOR_SIXTH: {
         "description": "",
         "intervals": [1, 3, 5, 6],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
-    ChordType.MINOR6TH: {
+    ChordType.MINOR_SIXTH: {
         "description": "",
         "intervals": [1, 3, 5, 6],
-        "scale": IonianModes.AEOLIAN,
+        "scale": MajorModes.AEOLIAN,
     },
     ChordType.DIMINISHED: {
         "description": "",
         "intervals": [1, 3, 5],
-        "scale": IonianModes.LOCRIAN,
+        "scale": MajorModes.LOCRIAN,
     },
     ChordType.SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
-        "scale": IonianModes.MIXOLYDIAN,
+        "scale": MajorModes.MIXOLYDIAN,
     },
     ChordType.MAJOR_SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
     ChordType.MINOR_SEVENTH: {
         "description": "",
         "intervals": [1, 3, 5, 7],
-        "scale": IonianModes.AEOLIAN,
+        "scale": MajorModes.AEOLIAN,
     },
-    ChordType.SUS2: {
+    ChordType.SUSPENDED_SECOND: {
         "description": "Suspended 2nd",
         "intervals": [1, 2, 5],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
-    ChordType.SUS4: {
+    ChordType.SUSPENDED_FOURTH: {
         "description": "Suspended 4th",
         "intervals": [1, 4, 5],
-        "scale": IonianModes.IONIAN,
+        "scale": MajorModes.IONIAN,
     },
 }

@@ -20,37 +20,7 @@ class MidiNote:
 # TODO fix circular import error to avoid magic number 8
 Octave = Enum("Octave", [str(i + 1) for i in range(8)])
 
-# TODO: Implement notes as a graph
-# Graph implementation of notes
-# vertices = ['Ab', 'A', 'A#', 'Bb', 'B', 'B#', 'Cb', 'C',  'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'E#', 'Fb', 'F', 'F#', 'Gb', 'G', 'G#']
-# n_vertices = len(vertices)
-# edges = [
-#
-# ]
-
-
-# Make 2d array
-
-
-# Notes = [
-#     "A",
-#     "Asharp",
-#     "B",
-#     "C",
-#     "Csharp",
-#     "D",
-#     "Dsharp",
-#     "E",
-#     "F",
-#     "Fsharp",
-#     "G",
-#     "Gsharp",
-# ]
-
-
-# Note = Enum("Note", Notes)
-
-IonianModes = Enum(
+MajorModes = Enum(
     "Modes",
     ["IONIAN", "DORIAN", "PHRYGIAN", "LYDIAN", "MIXOLYDIAN", "AEOLIAN", "LOCRIAN"],
 )
@@ -58,7 +28,6 @@ IonianModes = Enum(
 PentatonicModes = Enum(
     "PentatonicModes", ["MAJOR", "SECOND", "THIRD", "FOURTH", "MINOR"]
 )
-
 
 class StepType(IntEnum):
     HALF = 1
@@ -76,13 +45,13 @@ ChordType = Enum(
     [
         "MAJOR",
         "MINOR",
-        "MAJOR6TH",
-        "MINOR6TH",
-        "DIMINISHED",
         "SEVENTH",
         "MAJOR_SEVENTH",
         "MINOR_SEVENTH",
-        "SUS2",
-        "SUS4",
+        "MAJOR_SIXTH",
+        "MINOR_SIXTH",
+        "DIMINISHED",
+        "SUSPENDED_SECOND",
+        "SUSPENDED_FOURTH",
     ],
 )
