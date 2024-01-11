@@ -3,6 +3,7 @@ from src.theory import *
 from src.theory.note_sequence import NoteSequence, NotesFactory
 from src.theory.notes import Note, NoteGeneric
 from src.utils.utils import cycle_n_times
+from src.theory.constants import ChordFormulas
 
 
 class Scale(NoteSequence):
@@ -58,6 +59,7 @@ class Scale(NoteSequence):
         notes_set = NotesFactory.get_generic_notes()
         notes = [self.root]
         prev_note = self.root
+        # TODO 
         last_note_idx = notes_set.get_idxs(self.root.name)[0]
 
         for step in self.formula:
@@ -102,9 +104,28 @@ class Scale(NoteSequence):
             (interval % mod_len) - 1 if interval > mod_len else interval - 1
         ]
 
-    def get_available_chords(self) -> List[NoteSequence]:
-        chords = []
-        return chords
+    def get_available_chords(self) -> dict:
+        """For each note in scale, checks all chord types to see if it can be formed, diatonically, with notes of the scale.
+
+
+        Returns:
+            dict: Key is the name of the note (str literal), value is list of chord formulas
+        """
+        
+        # Check each note in scale, with all chord types, to see if is diatonic
+
+        # diatonic_chords = {
+        #     # Root Note -> [chord formulas]
+        # }
+
+        # for note in self.notes:
+
+        #     diatonic_chords[note.name] = []
+        #     for chord_form in ChordFormulas:
+        #         if Chord(root=note, type=chord_form).is_diatonic(scale=self) :
+        #             diatonic_chords[note.name].append(chord_form)
+
+        # return diatonic_chords
 
 
 # Define scale information

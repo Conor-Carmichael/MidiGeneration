@@ -149,6 +149,8 @@ class NotesFactory:
     Either midi info containing notes, or generic notesss
     """
 
+    _SEQS_GENERATED = 0
+
     def __init__(self) -> None:
         pass
 
@@ -178,6 +180,7 @@ class NotesFactory:
             prev_note = note
 
         prev_note.next_note = note
+        cls._SEQS_GENERATED += 1
 
         return NoteSequence(notes=notes, name="Midi Notes")
 
@@ -205,5 +208,33 @@ class NotesFactory:
 
         prev_note.next_note = notes[0]
         notes[0].prev_note = note  # make circular
+        cls._SEQS_GENERATED += 1
+        return NoteSequence(notes=notes, name="Generic Note Sequence")
 
-        return NoteSequence(notes=notes, name="Generic Notes")
+    @classmethod
+    def get_melody_sequnece(cls, note_strs:list, seq_name: str = None) -> NoteSequence:
+        """From list of notes for melody/bassline generate seq"""
+        notes = []
+        prev_note = None
+
+        for note_name in note_strs:
+            # Get name for the note
+            # Create Note object
+            note = NoteGeneric(
+                name=note_name,
+                prev_note=prev_note,
+                next_note=None,
+            )
+            # Add to list for cls
+            notes.append(note)
+
+            if prev_note:
+                prev_note.next_note = note
+
+            prev_note = note
+
+        prev_note.next_note = notes[0]
+        notes[0].prev_note = note  # make circular
+
+        cls._SEQS_GENERATED += 1
+        return NoteSequence(notes=notes, name=seq_name if seq_name else f"Note Sequence {cls._SEQS_GENERATED}")

@@ -66,28 +66,33 @@ def display_song(song: Song, curr_prog: ChordProgression):
         st.markdown("No chords...", unsafe_allow_html=True)
 
     else:
+        viz = Visualizer(settings={})
         # Show all the song
         if not song.is_empty():
-            for sect_idx, section in enumerate(song):
-                st.markdown(f"<h5>{str(section)}</h5>", unsafe_allow_html=True)
+            song_graph = viz._build_from_song(song=song)
+            st.graphviz_chart(song_graph, use_container_width=True)
+            # for sect_idx, section in enumerate(song):
+            #     st.markdown(f"<h5>{str(section)}</h5>", unsafe_allow_html=True)
         # Now show the current
         if not curr_prog.is_empty():
-            st.markdown(f"<h5>{str(curr_prog)}</h5>", unsafe_allow_html=True)
+            curr_prog_graph = viz._build_from_seq(name="Current Progression", sequence=curr_prog)
+            st.graphviz_chart(curr_prog_graph, use_container_width=True)
+
 
 
 def show_progression_controls():
     # Display buttons
-    cols = st.columns(3)
+    cols = st.columns(4)
     # if not get_state_val("adding_chord"):
     #     temp = cols[0].button(":heavy_plus_sign: Add Chord")
     #     set_state_val("adding_chord", temp if temp else get_state_val("adding_chord"))
 
     cols[0].button("Start Next Progression", on_click=start_next_progression)
-    cols[1].button("Clear All Progressions", on_click=clear_all_progressions)
-    cols[2].button(
+    cols[1].selectbox("Progression designation", options=["Verse", "Pre-chorus", "Chorus", "Bridge", "Outro"] )
+    cols[2].button("Clear All Progressions", on_click=clear_all_progressions)
+    cols[3].button(
         "Clear Current Progression", on_click=clear_progression
     )
-    st.info("When ready, open the sidebar on the left and go to Set Midi", icon="ℹ️")
 
 
 def display_list(data: List[str]) -> None:
@@ -107,19 +112,22 @@ def display_list(data: List[str]) -> None:
     return display_str
 
 
-def scale_selection() -> Tuple[ScaleFactory, Note, str]:
+def scale_selection(container:st.container=None) -> Tuple[ScaleFactory, Note, str]:
     """Function to generate an input form for scale selection.
 
     Returns:
         Tuple[ScaleFactory, Note, str]: _description_
     """
-    with st.expander("Set Scale", expanded=True):
-        root_note_str = st.selectbox(
+    with container:
+        cols = st.columns([1, 2, 2])
+
+        root_note_str = cols[0].selectbox(
             "Root Note",
             options=notes_list.get_notes(),
             format_func=lambda note: note.name,
         )
-        scale_fact = st.selectbox(
+
+        scale_fact = cols[1].selectbox(
             "Scale Type",
             options=AllScaleFactories,
             format_func=lambda sf: sf.name.name.title()
@@ -127,8 +135,9 @@ def scale_selection() -> Tuple[ScaleFactory, Note, str]:
             else sf.name,
         )
 
+
         if scale_fact.has_modes():
-            mode = st.selectbox(
+            mode = cols[2].selectbox(
                 scale_fact.name + " Mode",
                 scale_fact.modes,
                 format_func=lambda mode: mode.name.title()
@@ -147,82 +156,118 @@ def scale_selection() -> Tuple[ScaleFactory, Note, str]:
 # Chord Progresssion selection display functions         #
 # ****************************************************** #
 
-# Getting input options for the chord
+def diatonic_chord_input_form(
+    diatonic_opts:dict,
+    root_fmt_fn: Callable,
+    chord_type_fmt_fn: Callable,
+    inversion_range: tuple
+) -> Chord:
+    st.markdown(f"<h3>Input via options</h3>", unsafe_allow_html=True)
+    root_options = list(diatonic_opts.keys())
+    cols = st.columns([1, 1, 3])
+
+    root_selected = cols[0].radio(
+        "Root Note", options=root_options
+        #, format_func=set_fmt_fn(root_fmt_fn) # The keys are just the string, name
+    )
+
+    chord_type = cols[1].radio(
+        "Chord Type",
+        options=diatonic_opts[root_selected],
+        format_func=set_fmt_fn(chord_type_fmt_fn),
+        disabled=root_selected is None
+    )  
+
+
+    slash_value = cols[2].selectbox(
+        "Slash Value",
+        options=[None] + root_options,
+        # format_func=set_fmt_fn(root_fmt_fn),
+    )
+
+    inversion_value = cols[2].number_input(
+        "Inversion",
+        min(inversion_range),
+        max(inversion_range),
+        value=min(inversion_range),
+        disabled=slash_value != None,
+    )
+
+    extensions = cols[2].multiselect(
+        "Upper Chord Extensions", options=extension_values
+    )
+    altered_notes = cols[2].multiselect(
+        "Altered Notes",
+        options=note_alterations,
+        # format_func=,
+        disabled=True,
+        help="Coming soon: Choose chord interval and flatten/sharpen",
+    )
+    logger.debug(root_selected)
+    logger.debug(NoteGeneric(name=root_selected, ))
+
+
+    chord = Chord(
+        NoteGeneric(name=root_selected), chord_type, NoteGeneric(slash_value) if slash_value else None, inversion_value, extensions, altered_notes
+    )
+
+    return chord
+
+
 def chord_input_form(
     root_options: List,
     root_fmt_fn: Callable,
     chord_type_options: List,
     chord_type_fmt_fn: Callable,
     inversion_range: tuple,
-    submit_fn: Callable,
-) -> None:
-    """Creates an input form for determining a chord
+) -> Chord:
 
-    Args:
-        root_options (List): List of options for the root of the chord
-        root_fmt_fn (Callable): Format fn the root options for diplay
-        chord_type_options (List): List of the chord types to display
-        chord_type_fmt_fn (Callable): Format fn the chord options for diplay
-        inversion_range (tuple): Range for the inversion number input
-        submit_fn (Callable): Function to process the collected args
-    """
-    with st.expander("Define a Chord", expanded=True):
-        cols = st.columns(3)
-        # First Column:
-        cols[0].markdown("<p>Main Info</p>", unsafe_allow_html=True)
-        root_note_str = cols[0].selectbox(
-            "Root", options=root_options, format_func=set_fmt_fn(root_fmt_fn)
-        )
-        chord_type = cols[0].selectbox(
-            "Chord Type",
-            options=chord_type_options,
-            format_func=set_fmt_fn(chord_type_fmt_fn),
-        )
-        # Second Column:
-        cols[1].markdown("<p>Root Changes</p>", unsafe_allow_html=True)
-        slash_value = cols[1].selectbox(
-            "Slash Value",
-            options=[None] + root_options,
-            format_func=set_fmt_fn(root_fmt_fn),
-        )
-        inversion_value = cols[1].number_input(
-            "Inversion",
-            min(inversion_range),
-            max(inversion_range),
-            value=min(inversion_range),
-            disabled=slash_value != None,
-        )
+    st.markdown(f"<h3>Input via options</h3>", unsafe_allow_html=True)
 
-        # Third Column:
-        cols[2].markdown("<p>Additional Options</p>", unsafe_allow_html=True)
-        extensions = cols[2].multiselect(
-            "Upper Chord Extensions", options=extension_values
-        )
-        altered_notes = cols[2].multiselect(
-            "Altered Notes",
-            options=note_alterations,
-            # format_func=,
-            disabled=True,
-            help="Coming soon: Choose chord interval and flatten/sharpen",
-        )
+    cols = st.columns([1, 1, 3])
+    root_selected = cols[0].radio(
+        "Root Note", options=root_options,# format_func=set_fmt_fn(root_fmt_fn)
+    )
+    chord_type = cols[1].radio(
+        "Chord Type",
+        options=chord_type_options,
+        format_func=set_fmt_fn(chord_type_fmt_fn),
+    )       
 
-        st.button(
-            "Confirm Selections",
-            on_click=submit_fn,
-            args=(
-                root_note_str,
-                chord_type,
-                slash_value,
-                inversion_value,
-                extensions,
-                altered_notes,
-            ),
-        )
+    slash_value = cols[2].selectbox(
+        "Slash Value",
+        options=[None] + root_options,
+        format_func=set_fmt_fn(root_fmt_fn),
+    )
+
+    inversion_value = cols[2].number_input(
+        "Inversion",
+        min(inversion_range),
+        max(inversion_range),
+        value=min(inversion_range),
+        disabled=slash_value != None,
+    )
+
+    extensions = cols[2].multiselect(
+        "Upper Chord Extensions", options=extension_values
+    )
+    altered_notes = cols[2].multiselect(
+        "Altered Notes",
+        options=note_alterations,
+        # format_func=,
+        disabled=True,
+        help="Coming soon: Choose chord interval and flatten/sharpen",
+    )
+    chord = Chord(
+        root_selected, chord_type, slash_value, inversion_value, extensions, altered_notes
+    )
+
+    return chord
 
 
 # Moving chords from input form to the progression
 def submit_chord_to_prog(
-    root_note, chord_type, slash_value, inversion_value, extensions, altered_notes
+    chord:Chord
 ) -> None:
     """Takes the chord args and builds a chord, adds it to the song.
 
@@ -237,9 +282,6 @@ def submit_chord_to_prog(
     # TODO Shouldnt be messing with state variable in display code
     # but wasnt working on first attempt to change
     # root = NoteGeneric(name=root_note)
-    chord = Chord(
-        root_note, chord_type, slash_value, inversion_value, extensions, altered_notes
-    )
 
     add_chord_to_prog(chord)
     set_state_val("adding_chord", False)

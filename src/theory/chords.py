@@ -2,12 +2,12 @@ from src.theory import *
 from src.theory.utils import get_roman_numeral
 from src.theory.note_sequence import NoteSequence
 from src.theory.notes import Note, NoteGeneric
-from src.theory.constants import ChordFormulas, ChordSymbols, ChordType
+from src.theory.constants import ChordFormulas, ChordSymbols, ChordType, RevChordSymbMap
 from src.theory.scales import Scale, ScaleFactory, find_scale_factory_for_mode
-from src.utils.utils import cycle_n_times
+from src.utils.utils import cycle_n_times, parse_chord_root_change, parse_chord_type, parse_root_from_str
 from random import randint
 
-from numpy import log2
+from loguru import logger
 
 
 class ChordGeneric:
@@ -93,6 +93,8 @@ class ChordGeneric:
             extensions=self.extensions,
             altered_notes=self.altered_notes,
         )
+    
+
 
 
 class Chord(NoteSequence):
@@ -151,7 +153,8 @@ class Chord(NoteSequence):
 
         super(Chord, self).__init__(name=self.type.name, notes=notes, *args, **kwargs)
 
-        if self.altered_notes != []:
+
+        if self.altered_notes and self.altered_notes != []:
             raise NotImplementedError("altered_notes for chord")
             self.set_altered_notes(notes)
 
@@ -255,3 +258,33 @@ class Chord(NoteSequence):
         # value of the note, and collecte the midi information and tie it to each note.
         # Converts notes from 'NoteGeneric' to 'Note' (if they are not already)
         self.conv_generic_notes_to_midi_notes(**midi_instructions)
+
+    @staticmethod
+    def from_str(input_str:str = "") -> object:
+        if input_str == "":
+            logger.debug("empty string input, returning None")
+            return None
+        
+        if root_str := parse_root_from_str(input_str=input_str):
+            logger.debug(f"Root string from chord input detected as {root_str}")
+            root_note_gen = NoteGeneric(root_str)
+
+        else:
+            logger.debug(f"Root string from chord input didnt match anything")
+            return None
+
+
+        chord_type = parse_chord_type(input_str=input_str)
+        root_chng_str = parse_chord_root_change(input_str=input_str)
+        slash_value_gen = NoteGeneric(root_chng_str) if root_chng_str else None
+        logger.debug(f'Params for new chord <Root, Type, Bass> -> <{root_str} {chord_type} {root_chng_str}>')
+        new_chord = Chord(
+            root=root_note_gen,
+            type=chord_type,
+            slash_value=slash_value_gen
+        )
+        logger.info(f"Input from user created Chord: {new_chord.__str__()}")
+        return new_chord
+
+
+    

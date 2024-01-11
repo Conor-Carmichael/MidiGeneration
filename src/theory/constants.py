@@ -50,6 +50,9 @@ SHARP = "♯"
 FLAT = "♭"
 NATURAL = "♮"
 
+RE_ChordRootNote = r'^[A-G][#|b|♯|♭]?'
+RE_Fn_ChordType = lambda chord_type_str : RE_ChordRootNote + chord_type_str + r'($|\/)'
+RE_slash_value =  r'.*\/[A-G][#|b|♯|♭]?$'
 # Scale Formula Definitions
 WholeToneFomula = [
     StepType.WHOLE,
@@ -134,18 +137,24 @@ IonianChordFormulas = [
 ]
 
 ChordSymbols = {
-    # First is for triad, second is for extended
-    ChordType.MAJOR: ["", "maj"],
-    ChordType.MINOR: ["m", "min"],
+    # First is for triad, second is for extended, third normal english
+    ChordType.MAJOR: ["", "maj", "major"],
+    ChordType.MINOR: ["m", "min", "minor"],
     ChordType.MAJOR_SIXTH: ["6", "maj6"],
     ChordType.MINOR_SIXTH: ["m6", "min6"],
     ChordType.DIMINISHED: ["°", "dim"],
-    ChordType.SEVENTH: ["7", ""],
-    ChordType.MAJOR_SEVENTH: ["maj7", "∆7"],
-    ChordType.MINOR_SEVENTH: ["min7", "-7"],
-    ChordType.SUSPENDED_SECOND: ["Sus2", "Sus2"],
-    ChordType.SUSPENDED_FOURTH: ["Sus4", "Sus4"],
+    ChordType.SEVENTH: ["7", "seven", "seventh"],
+    ChordType.MAJOR_SEVENTH: ["maj7", "∆7", "major seventh"],
+    ChordType.MINOR_SEVENTH: ["min7", "-7", "minor seventh"],
+    ChordType.SUSPENDED_SECOND: ["Sus2", "Sus2", "suspended second"],
+    ChordType.SUSPENDED_FOURTH: ["Sus4", "Sus4", "susepended fourth"],
 }
+
+RevChordSymbMap = {}
+for key, vals in ChordSymbols.items():
+    for v in vals:
+        RevChordSymbMap[v] = key
+
 
 ChordFormulas = {
     ChordType.MAJOR: {

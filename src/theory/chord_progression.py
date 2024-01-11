@@ -4,13 +4,13 @@ import midiutil
 
 class ChordProgression:
     def __init__(
-        self, chords: List[Chord], repeats: int, track: int, channel: int = 0
+        self, chords: List[Chord], repeats: int, track: int, channel: int = 0, designation: str = None
     ) -> None:
         self.chords = chords
         self.repeats = repeats
         self.track = track
         self.channel = channel
-
+        self.designation = designation
         self.current = 0
 
 
@@ -65,18 +65,21 @@ class Song:
     def __init__(
         self,
         sections: List[ChordProgression],
+        home_key: Scale,
         bpm: int,
         num_tracks: int,
         starting_beat: int = 0,
         full_loops: int = 0,
     ) -> None:
         self.sections = sections
+        self.home_key = home_key
         self.bpm = bpm
         self.num_tracks = num_tracks
         self.starting_beat = starting_beat
         self.full_loops = full_loops
 
         self.curr_sect = 0
+
 
     def __len__(self) -> int:
         return len(self.sections)
@@ -92,7 +95,7 @@ class Song:
 
     @classmethod
     def empty(cls) -> Any:
-        return Song(sections=[], bpm=default_bpm, num_tracks=1)
+        return Song(sections=[], bpm=default_bpm, num_tracks=1, home_key=None)
 
     def remv_empty(self) -> None:
         self.sections = list(

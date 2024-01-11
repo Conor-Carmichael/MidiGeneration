@@ -1,5 +1,7 @@
 MIDIUtil
 numpy
 black
-streamlit
 python-dotenv
+streamlit
+loguru
+streamlit-option-menu

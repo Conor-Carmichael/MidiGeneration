@@ -6,6 +6,7 @@ import os
 import streamlit as st
 from pickle import load, dump
 from src.theory import *
+from loguru import logger
 
 # Input styles:
 # * Free: Select from any chords
@@ -77,11 +78,11 @@ def get_state_val(k):
 
 
 def display_state():
-    logging.info("Current state of application.")
+    logger.info("Current state of application.")
 
     for k, v in st.session_state.items():
         # print(f"{k} .. {str(v)}")
-        logging.info(f"{k} : {str(v)}")
+        logger.info(f"{k} : {str(v)}")
 
 
 def remove_empty():
@@ -99,6 +100,7 @@ def clear_all_progressions():
 
 def add_chord_to_prog(chord: Chord):
     """Adds chord to sessions current_progression"""
+    logger.debug(f"Adding {chord.__str__()} to current progression")
     get_state_val("current_progression").add_chord(chord)
     set_state_val("adding_chord", False)
 

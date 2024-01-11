@@ -10,16 +10,26 @@ import numpy as np
 
 
 
-
 class NoteGeneric:
 
     empty_val = "__"
     """Note class with no pitch or midi information. Basically just the name."""
 
     def __init__(self, name: str, next_note=None, prev_note=None) -> None:
-        self.name = name
+        self.name = name.upper() # Ensure it is upper case, so we can replace b -> Flat Symbol
         self.base_note_name = self.name[0]
-        self.alter = self.name[1:] if len(self.name) > 1 else ""
+        self.alter = self.name[1:] if len(self.name) > 1 else None
+
+        # For safety
+        self.name.replace("#", SHARP)
+        self.base_note_name.replace("#", SHARP)
+
+        self.name.replace("b", FLAT)
+        self.base_note_name.replace("b", FLAT)
+
+        if self.alter:
+            self.alter.replace("#", SHARP)
+            self.alter.replace("b", FLAT)
 
         self.next_note = next_note
         self.prev_note = prev_note
@@ -33,7 +43,7 @@ class NoteGeneric:
             return False
 
     def __str__(self) -> str:
-        return f"{self.base_note_name}{self.alter}"
+        return f"{self.base_note_name}{self.alter if self.alter else ''}"
 
     def __iter__(self):
         return self.next_note
@@ -82,8 +92,6 @@ class Note(NoteGeneric):
     Holds pitch, velocity, duration, start time, midi value for the note.
     """
 
-
-
     def __init__(
         self,
         midi_value: int,
@@ -130,3 +138,7 @@ class Note(NoteGeneric):
 
     def __repr__(self) -> str:
         return f"{self.name}={self.midi_value} (Vel:{self.velocity}, Dur:{self.duration}, T:{self.start_time})"
+
+
+
+
