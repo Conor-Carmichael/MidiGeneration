@@ -62,6 +62,7 @@ def set_sidebar(homepage: bool = True):
 def display_song(song: Song, curr_prog: ChordProgression):
     """Show the current song: Iteratively display chord progs"""
     both_empty = song.is_empty() and curr_prog.is_empty()
+
     if both_empty:
         st.markdown("No chords...", unsafe_allow_html=True)
 
@@ -69,14 +70,19 @@ def display_song(song: Song, curr_prog: ChordProgression):
         viz = Visualizer(settings={})
         # Show all the song
         if not song.is_empty():
+            st.markdown(f"<h4>Song in {song.home_key.__str__()}</h4>", unsafe_allow_html=True)
             song_graph = viz._build_from_song(song=song)
-            st.graphviz_chart(song_graph, use_container_width=True)
+            st.graphviz_chart(song_graph)
             # for sect_idx, section in enumerate(song):
             #     st.markdown(f"<h5>{str(section)}</h5>", unsafe_allow_html=True)
         # Now show the current
+        st.markdown("<h4>Progression in progress...</h4>", unsafe_allow_html=True)
         if not curr_prog.is_empty():
             curr_prog_graph = viz._build_from_seq(name="Current Progression", sequence=curr_prog)
-            st.graphviz_chart(curr_prog_graph, use_container_width=True)
+            st.graphviz_chart(curr_prog_graph)
+        else:
+            st.markdown("Add in some chords")
+
 
 
 
@@ -87,11 +93,19 @@ def show_progression_controls():
     #     temp = cols[0].button(":heavy_plus_sign: Add Chord")
     #     set_state_val("adding_chord", temp if temp else get_state_val("adding_chord"))
 
-    cols[0].button("Start Next Progression", on_click=start_next_progression)
-    cols[1].selectbox("Progression designation", options=["Verse", "Pre-chorus", "Chorus", "Bridge", "Outro"] )
-    cols[2].button("Clear All Progressions", on_click=clear_all_progressions)
+    progression_designation = cols[0].selectbox("Progression designation", index=0, options=["Verse", "Pre-chorus", "Chorus", "Bridge", "Outro"] )
+    # these are to force alignment with the button, annoying ik
+    cols[1].markdown("")
+    cols[1].markdown("")
+    cols[1].button("Start Next Progression", on_click=start_next_progression, args=({"progression_designation":progression_designation}), use_container_width=True)
+
+    cols[2].markdown("")
+    cols[2].markdown("")
+    cols[2].button("Clear All Progressions", on_click=clear_all_progressions, use_container_width=True)
+    cols[3].markdown("")
+    cols[3].markdown("")
     cols[3].button(
-        "Clear Current Progression", on_click=clear_progression
+        "Clear Current Progression", on_click=clear_progression, use_container_width=True
     )
 
 
@@ -164,7 +178,7 @@ def diatonic_chord_input_form(
 ) -> Chord:
     st.markdown(f"<h3>Input via options</h3>", unsafe_allow_html=True)
     root_options = list(diatonic_opts.keys())
-    cols = st.columns([1, 1, 3])
+    cols = st.columns([1, 1, 1, 1])
 
     root_selected = cols[0].radio(
         "Root Note", options=root_options
@@ -193,10 +207,10 @@ def diatonic_chord_input_form(
         disabled=slash_value != None,
     )
 
-    extensions = cols[2].multiselect(
+    extensions = cols[3].multiselect(
         "Upper Chord Extensions", options=extension_values
     )
-    altered_notes = cols[2].multiselect(
+    altered_notes = cols[3].multiselect(
         "Altered Notes",
         options=note_alterations,
         # format_func=,
@@ -205,6 +219,10 @@ def diatonic_chord_input_form(
     )
     logger.debug(root_selected)
     logger.debug(NoteGeneric(name=root_selected, ))
+
+
+    # if st.button("Random chord"):
+    #     ran
 
 
     chord = Chord(
@@ -225,44 +243,46 @@ def chord_input_form(
     st.markdown(f"<h3>Input via options</h3>", unsafe_allow_html=True)
 
     cols = st.columns([1, 1, 3])
+    print(root_options)
+    st.selectbox("Root Note", options=root_options[:3],     format_func=set_fmt_fn(root_fmt_fn))
     root_selected = cols[0].radio(
-        "Root Note", options=root_options,# format_func=set_fmt_fn(root_fmt_fn)
+        "Root Note", options=["A","V"]#, format_func=set_fmt_fn(root_fmt_fn)
     )
-    chord_type = cols[1].radio(
-        "Chord Type",
-        options=chord_type_options,
-        format_func=set_fmt_fn(chord_type_fmt_fn),
-    )       
+    # chord_type = cols[1].radio(
+    #     "Chord Type",
+    #     options=chord_type_options,
+    #     format_func=set_fmt_fn(chord_type_fmt_fn),
+    # )       
 
-    slash_value = cols[2].selectbox(
-        "Slash Value",
-        options=[None] + root_options,
-        format_func=set_fmt_fn(root_fmt_fn),
-    )
+    # slash_value = cols[2].selectbox(
+    #     "Slash Value",
+    #     options=[None] + root_options,
+    #     format_func=set_fmt_fn(root_fmt_fn),
+    # )
 
-    inversion_value = cols[2].number_input(
-        "Inversion",
-        min(inversion_range),
-        max(inversion_range),
-        value=min(inversion_range),
-        disabled=slash_value != None,
-    )
+    # inversion_value = cols[2].number_input(
+    #     "Inversion",
+    #     min(inversion_range),
+    #     max(inversion_range),
+    #     value=min(inversion_range),
+    #     disabled=slash_value != None,
+    # )
 
-    extensions = cols[2].multiselect(
-        "Upper Chord Extensions", options=extension_values
-    )
-    altered_notes = cols[2].multiselect(
-        "Altered Notes",
-        options=note_alterations,
-        # format_func=,
-        disabled=True,
-        help="Coming soon: Choose chord interval and flatten/sharpen",
-    )
-    chord = Chord(
-        root_selected, chord_type, slash_value, inversion_value, extensions, altered_notes
-    )
+    # extensions = cols[2].multiselect(
+    #     "Upper Chord Extensions", options=extension_values
+    # )
+    # altered_notes = cols[2].multiselect(
+    #     "Altered Notes",
+    #     options=note_alterations,
+    #     # format_func=,
+    #     disabled=True,
+    #     help="Coming soon: Choose chord interval and flatten/sharpen",
+    # )
+    # chord = Chord(
+    #     root_selected, chord_type, slash_value, inversion_value, extensions, altered_notes
+    # )
 
-    return chord
+    # return chord
 
 
 # Moving chords from input form to the progression

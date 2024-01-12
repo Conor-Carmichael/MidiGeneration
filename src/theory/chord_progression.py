@@ -1,6 +1,6 @@
 from src.theory import *
 import midiutil
-
+from loguru import logger
 
 class ChordProgression:
     def __init__(
@@ -53,6 +53,9 @@ class ChordProgression:
 
     def is_empty(self) -> bool:
         return self.chords == []
+    
+    def set_designation(self, desig:str) -> None:
+        self.designation = desig
 
     @classmethod
     def empty(cls):
@@ -70,6 +73,7 @@ class Song:
         num_tracks: int,
         starting_beat: int = 0,
         full_loops: int = 0,
+        title:str = None
     ) -> None:
         self.sections = sections
         self.home_key = home_key
@@ -77,6 +81,7 @@ class Song:
         self.num_tracks = num_tracks
         self.starting_beat = starting_beat
         self.full_loops = full_loops
+        self.title = title
 
         self.curr_sect = 0
 
@@ -103,6 +108,10 @@ class Song:
                 lambda sect: sect.chords != None and sect.chords != [], self.sections
             )
         )
+    
+
+    def set_key(self, scale:Scale) -> None:
+        self.home_key = scale
 
     def set_bpm(self, new_bpm: int) -> None:
         self.bpm = new_bpm
@@ -133,13 +142,14 @@ class Song:
 
 
     def write_song_to_midi(self, dest: str, create_bass_track: bool, is_generic:bool, scale:Scale = None):
+        logger.info("Generating MIDI results for song.")
         if create_bass_track:
+            logger.info("Creating with a separate bass track.")
             self.set_num_tracks(self.num_tracks + 1)
 
         midi_file_writer = midiutil.MIDIFile(numTracks=self.num_tracks)
         curr_beat = self.starting_beat
 
-        full_song_write_count = 0
         midi_file_writer.addTempo(
             track=0, time=curr_beat, tempo=self.bpm
         )
@@ -148,12 +158,18 @@ class Song:
                 track=1, time=curr_beat, tempo=self.bpm
             )
 
+        # Each loop creates a full song- can set to loop this multiple times
+        full_song_write_count = 0
         while full_song_write_count < self.full_loops:
+
             for sect in self.sections:
+                # Can loop indiv sections, so go until no longer needed
                 section_write_count = 0
                 while section_write_count < sect.repeats:
                     for chord in sect.chords:
                     
+                        # Write each note of the chord to midi file at same
+                        # point in time
                         for note in chord.get_notes():
 
                             midi_file_writer.addNote(
@@ -164,24 +180,27 @@ class Song:
                                 duration=note.duration,
                                 volume=note.velocity,
                             )
-
+                        # If bass track requested, do so as well
                         if create_bass_track:
                             note = chord.get_notes()[0]
                             midi_file_writer.addNote(
                                 track=1,
                                 channel=0,
-                                pitch=note.midi_value,
+                                pitch=note.midi_value-24,
                                 time=curr_beat,
                                 duration=note.duration,
                                 volume=note.velocity,
                             )
 
+                        # Step to end of the chord being added
                         curr_beat += note.duration
 
                     section_write_count += 1  # Increment counter to repeat sections
 
             full_song_write_count += 1
 
+
+        # Write to the requested destination
         with open("./"+dest, "wb") as file:
             midi_file_writer.writeFile(file)
             Song.songs += 1

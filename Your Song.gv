@@ -1,0 +1,47 @@
+digraph "Your Song" {
+	graph [rankdir=LR]
+	subgraph "Sequence 1" {
+		graph [rankdir=LR]
+		0 [label=C shape=square]
+		1 [label="F maj7" shape=square]
+		0 -> 1
+		2 [label="A m" shape=square]
+		1 -> 2
+		3 [label="F maj7" shape=square]
+		2 -> 3
+		3 -> 0
+	}
+	subgraph "Sequence 2" {
+		graph [rankdir=LR]
+		4 [label="A m" shape=square]
+		5 [label=C shape=square]
+		4 -> 5
+		6 [label="F maj7" shape=square]
+		5 -> 6
+		7 [label="G 7" shape=square]
+		6 -> 7
+		7 -> 4
+	}
+	subgraph "Sequence 3" {
+		graph [rankdir=LR]
+		8 [label=C shape=square]
+		9 [label="F maj7" shape=square]
+		8 -> 9
+		10 [label="A m" shape=square]
+		9 -> 10
+		11 [label="F maj7" shape=square]
+		10 -> 11
+		11 -> 8
+	}
+	subgraph "Sequence 4" {
+		graph [rankdir=LR]
+		12 [label="A m" shape=square]
+		13 [label=C shape=square]
+		12 -> 13
+		14 [label="F maj7" shape=square]
+		13 -> 14
+		15 [label="G 7" shape=square]
+		14 -> 15
+		15 -> 12
+	}
+}

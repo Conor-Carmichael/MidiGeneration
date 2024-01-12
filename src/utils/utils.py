@@ -21,6 +21,9 @@ def calc_semitone_diff_pitches(a: float, b: float) -> int:
 
 
 def calc_semitone_diff_notes(a, b) -> int:
+    # This seems kinda dumb Illl come back to it, 
+    # dont remember if I had a plan for this
+
     return calc_semitone_diff_pitches(a.pitch, b.pitch)
 
 

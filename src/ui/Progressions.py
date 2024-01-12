@@ -9,6 +9,7 @@ sys.path.append(os.getcwd())
 
 
 from src.theory import *
+from src.theory.note_sequence import NotesFactory
 from src.settings import dev_mode
 from src.ui.display import *
 from src.ui.state_mgmt import *
@@ -42,6 +43,8 @@ display_song(
     get_state_val("song"), 
     get_state_val("current_progression")
 )
+hz_line()
+
 # Start next, clear current, clear all progressions
 show_progression_controls()
 
@@ -59,6 +62,12 @@ scale_factory, root_note_str, mode_choice = scale_selection(scale_input_box)
 if mode_choice:
     scale_factory = scale_factory.get_mode_definition(mode_name=mode_choice)
 scale = scale_factory.generate_scale(root_note=root_note_str)
+
+#Update the Song's key
+get_state_val(
+    "song"
+).set_key(scale)
+
 hz_line()
 
 
@@ -71,7 +80,7 @@ selected = option_menu(
     ["Text Input", "Diatonic Input",  "Free Form Input"], 
     icons=['keyboard', 'music-note-list',  'card-list'], 
     menu_icon="gear", 
-    default_index=0, 
+    default_index=1, 
     orientation="horizontal",
     key="input-opt-menu"
 )
@@ -107,22 +116,23 @@ elif selected == "Diatonic Input":
 
 elif selected == "Free Form Input":
     with st.expander(expanded=True, label="Chord Input"):
+
         new_chord = chord_input_form(
-            root_options=notes_list,
+            root_options=NotesFactory.get_generic_notes(),
             root_fmt_fn=lambda note: note.name if not note is None else note,
             chord_type_options=[chord for chord in ChordType],
             chord_type_fmt_fn=lambda chord_type: " ".join(chord_type.name.split("_")).title(),
             inversion_range=inversion_values,
         )
-
+        # st.markdown("HEr")
 
 if st.button(
     f"Add {new_chord.__str__()}" if new_chord else "Set Next Chord",
     use_container_width=True,
     disabled=(new_chord is None),
 ):
-    
     submit_chord_to_prog(new_chord)
+    st.experimental_rerun()
 
 
 

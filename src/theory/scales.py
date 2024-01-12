@@ -38,6 +38,13 @@ class Scale(NoteSequence):
 
         if self.altered_notes:
             self.set_altered_notes(notes)
+    def __str__(self) -> str:
+        # self.name is field tht holds enum of scale type
+        # Name of that is text for the enum
+        # Conver that to title case, it is normall upper
+        return f"{self.root.name} {self.name.name.title()}" 
+    
+
 
     def is_empty(self) -> bool:
         return self.root == None, self.formula == []

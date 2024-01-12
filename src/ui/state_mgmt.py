@@ -105,8 +105,13 @@ def add_chord_to_prog(chord: Chord):
     set_state_val("adding_chord", False)
 
 
-def start_next_progression():
-    get_state_val("song").add_section(get_state_val("current_progression"))
+def start_next_progression(progression_designation:str):
+    song = get_state_val("song")
+    curr_prog = get_state_val("current_progression")
+    curr_prog.set_designation(progression_designation)
+    song.add_section(
+        curr_prog
+    )
     set_state_val("current_progression", ChordProgression.empty())
 
 
