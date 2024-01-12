@@ -5,3 +5,5 @@
 *.mid
 *.vscode/
 *.DS_Store
+*.pdf
+*.gv
